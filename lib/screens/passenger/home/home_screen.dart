@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teman_asik/constans.dart';
+import 'package:teman_asik/screens/passenger/bus-stop/bus_stop_screen.dart';
 
 class PassengerHomeScreen extends StatefulWidget {
   @override
@@ -7,92 +7,72 @@ class PassengerHomeScreen extends StatefulWidget {
 }
 
 class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
-  @override
-  Widget build(BuildContext context) {
-    final int itemLength = 5;
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static List<Widget> _widgetOptions = <Widget>[
+    BusStopScreen(),
+    Text(
+      'Index 1',
+      style: optionStyle,
+    ),
+    BusStopScreen(),
+    Text(
+      'Index 3',
+      style: optionStyle,
+    ),
+    Text(
+      'Exit',
+      style: optionStyle,
+    ),
+  ];
 
-    return Scaffold(
-      backgroundColor: kPrimaryColor,
-      // appBar: AppBar(
-      //   leading: GestureDetector(
-      //     onTap: () {
-      //       Navigator.pushReplacementNamed(context, '/');
-      //     },
-      //     child: Icon(Icons.chevron_left),
-      //   )
-      // ),
-      body: Container(
-        child: Column(
-          children: [
-            
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(
-          color: kBackgroundColor,
-          border: Border(
-            top: BorderSide(width: 1, color: kDarkColor.withOpacity(0.1))
-          )
-        ),
-        child: Row(
-          children: [
-            NavItem(length: itemLength, index: 0, icon: Icons.bus_alert),
-            NavItem(length: itemLength, index: 1, icon: Icons.alt_route),
-            NavItem(length: itemLength, index: 2, icon: Icons.map),
-            NavItem(length: itemLength, index: 3, icon: Icons.question_answer),
-            NavItem(length: itemLength, index: 4, icon: Icons.close),
-          ],
-        ),
-      ),
-    );
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
-}
-
-class NavItem extends StatelessWidget {
-  final icon;
-  final length;
-  final int index;
-
-  NavItem({ this.icon, this.length, this.index });
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final backgroundColor = kBackgroundColor;
-
-    return Container(
-      height: 60,
-      width: screenWidth / this.length,
-      decoration: ((index == 1)
-        ? BoxDecoration(
-            color: backgroundColor,
-            border: Border(bottom: BorderSide(width: 4, color: kPrimaryColor))
-          )
-        : BoxDecoration(
-          color: backgroundColor
-        )),
-        child: (index == 1)
-          ? Container(
-            child: Icon(
-              this.icon,
-              color: ((index == 1) ? kPrimaryColor : kDarkColor.withOpacity(0.3))
-            ),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  kPrimaryColor.withOpacity(0.3),
-                  kPrimaryColor.withOpacity(0.02),
-                ]
-              ),
-            ))
-          : Icon(
-              this.icon,
-              color: ((index == 1) ? kPrimaryColor : kDarkColor.withOpacity(0.3))
-            )
+    return Scaffold(
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bus_alert),
+            label: 'Home',
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.alt_route),
+            label: 'Route Map',
+            backgroundColor: Colors.yellow,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Bus Stop',
+            backgroundColor: Colors.lightBlue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.question_answer),
+            label: 'Faq',
+            backgroundColor: Colors.yellowAccent,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.close),
+            label: 'Exit',
+            backgroundColor: Colors.red,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: false,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
