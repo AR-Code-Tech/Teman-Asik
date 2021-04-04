@@ -1,5 +1,5 @@
 # teman_asik
-![alt text](https://github.com/AR-Code-Tech/Teman-Asik/blob/main/assets/images/ss/Screen Shot 2021-04-05 at 03.11.28.png?raw=true)
+![screenshot](https://raw.githubusercontent.com/AR-Code-Tech/Teman-Asik/main/assets/images/ss/Screen%20Shot%202021-04-05%20at%2003.11.28.png)
 
 ## Getting Started
 
