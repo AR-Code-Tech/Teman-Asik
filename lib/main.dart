@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'constans.dart';
 import 'routes.dart';
-import 'screens/home/home_screen.dart';
 
 void main(List<String> args) {
   runApp(MyApp());
