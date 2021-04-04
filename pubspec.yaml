@@ -23,8 +23,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  hexcolor: ^2.0.3
   flutter_svg: ^0.19.3
+  latlong: ^0.6.1
+  flutter_map: ^0.12.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,6 +51,7 @@ flutter:
   assets:
     - assets/images/illustrations/
     - assets/images/logo/
+    - assets/icons/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
