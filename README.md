@@ -1,6 +1,5 @@
 # teman_asik
-
-A new Flutter project.
+![alt text](https://github.com/AR-Code-Tech/Teman-Asik/blob/main/assets/images/ss/Screen Shot 2021-04-05 at 03.11.28.png?raw=true)
 
 ## Getting Started
 
