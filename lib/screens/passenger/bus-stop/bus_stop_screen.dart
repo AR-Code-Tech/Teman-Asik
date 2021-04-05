@@ -13,12 +13,12 @@ class _BusStopScreenState extends State<BusStopScreen> {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: BusStopBody(),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.my_location),
-        onPressed: () {
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.my_location),
+      //   onPressed: () {
 
-        },
-      ),
+      //   },
+      // ),
     );
   }
 }
