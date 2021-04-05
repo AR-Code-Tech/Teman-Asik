@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
-import 'components/body.dart';
+import 'package:teman_asik/screens/passenger/bus-stop/components/body.dart';
 
 class BusStopScreen extends StatefulWidget {
   @override

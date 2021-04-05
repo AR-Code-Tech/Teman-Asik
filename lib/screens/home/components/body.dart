@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
 
@@ -16,17 +17,9 @@ class _HomeBodyState extends State<HomeBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              margin: EdgeInsets.only(top: 15),
-              child: Column(
-                children: [
-                  Text("LOGO APPS", style: kTitleStyle)
-                ],
-              ),
-            ),
             Column(
               children: [
-                Text("Anda adalah...?", style: kSubTitleStyle),
+                Text("Anda adalah...", style: kTitleStyle),
                 SizedBox(height: 30),
                 CardSelection(
                   title: "Penumpang",
@@ -67,12 +60,7 @@ class CardSelection extends StatelessWidget {
   final Color color;
   final Function onTap;
 
-  CardSelection({
-    @required this.illustration,
-    @required this.title,
-    @required this.color,
-    @required this.onTap
-  });
+  CardSelection({ this.illustration, this.title, this.color, this.onTap });
 
   @override
   Widget build(BuildContext context) {

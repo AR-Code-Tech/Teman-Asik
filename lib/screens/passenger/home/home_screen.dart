@@ -11,7 +11,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    BusStopScreen(),
+    Text(
+      'Index 0',
+      style: optionStyle,
+    ),
     Text(
       'Index 1',
       style: optionStyle,
@@ -72,6 +75,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: false,
         onTap: _onItemTapped,
+        
       ),
     );
   }
