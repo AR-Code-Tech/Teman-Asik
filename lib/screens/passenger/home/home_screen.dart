@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teman_asik/screens/home/home_screen.dart';
 import 'package:teman_asik/screens/passenger/bus-stop/bus_stop_screen.dart';
 
 class PassengerHomeScreen extends StatefulWidget {
@@ -24,10 +25,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
       'Index 3',
       style: optionStyle,
     ),
-    Text(
-      'Exit',
-      style: optionStyle,
-    ),
+    HomeScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -52,7 +50,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.alt_route),
             label: 'Route Map',
-            backgroundColor: Colors.yellow,
+            backgroundColor: Colors.purple,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
@@ -62,7 +60,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.question_answer),
             label: 'Faq',
-            backgroundColor: Colors.yellowAccent,
+            backgroundColor: Colors.purpleAccent,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.close),
