@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:teman_asik/screens/home/home_screen.dart';
+import 'package:teman_asik/constans.dart';
 import 'package:teman_asik/screens/passenger/bus-stop/bus_stop_screen.dart';
+import 'package:teman_asik/screens/passenger/bus-list/bus_list_screen.dart';
 
 class PassengerHomeScreen extends StatefulWidget {
   @override
@@ -9,13 +10,10 @@ class PassengerHomeScreen extends StatefulWidget {
 
 class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  BuildContext context;
+  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0',
-      style: optionStyle,
-    ),
+    BusListScreen(),
     Text(
       'Index 1',
       style: optionStyle,
@@ -25,55 +23,71 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
       'Index 3',
       style: optionStyle,
     ),
-    HomeScreen(),
+    Container(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    if (index == _widgetOptions.length-1) Navigator.pushReplacementNamed(this.context, '/');
   }
 
   @override
   Widget build(BuildContext context) {
+    final itemBackgroundColor = Colors.grey[200];
+    setState(() {
+      this.context = context;
+    });
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bus_alert),
-            label: 'Home',
-            backgroundColor: Colors.blue,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.alt_route),
-            label: 'Route Map',
-            backgroundColor: Colors.purple,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Bus Stop',
-            backgroundColor: Colors.lightBlue,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.question_answer),
-            label: 'Faq',
-            backgroundColor: Colors.purpleAccent,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.close),
-            label: 'Exit',
-            backgroundColor: Colors.red,
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: false,
-        onTap: _onItemTapped,
-        
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey[300],
+              width: 1
+            )
+          )
+        ),
+        child: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.directions_bus),
+              label: 'Home',
+              backgroundColor: itemBackgroundColor,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.alt_route),
+              label: 'Pilih Rute',
+              backgroundColor: itemBackgroundColor,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map),
+              label: 'Halte',
+              backgroundColor: itemBackgroundColor,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.question_answer),
+              label: 'Faq',
+              backgroundColor: itemBackgroundColor,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.close),
+              label: 'Exit',
+              backgroundColor: kPrimaryColor,
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: kPrimaryColor,
+          unselectedItemColor: Colors.grey[400],
+          showUnselectedLabels: false,
+          showSelectedLabels: false,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

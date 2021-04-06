@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: kAppTitle,
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: kFontFamily),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/test',
+      initialRoute: '/',
       routes: routes,
     );
   }

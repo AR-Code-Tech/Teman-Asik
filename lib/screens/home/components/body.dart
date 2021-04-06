@@ -29,7 +29,7 @@ class _HomeBodyState extends State<HomeBody> {
                 title: "Penumpang",
                 illustration:
                     'assets/images/illustrations/walking-with-handbag.png',
-                color: Colors.purple[300],
+                color: Colors.blue[300],
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/passenger/home');
                 },
