@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
 import '../models/car.dart';
+import '../../bus-list-detail/bus_list_detail_screen.dart';
 import 'package:fluttericon/linecons_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/fontelico_icons.dart';
@@ -19,6 +22,7 @@ class _BusListBodyState extends State<BusListBody> {
     setState(() {
       _busCars.add(
         CarModel(
+          id: 'a',
           title: 'Lyn A',
           icon: Icons.directions_bus,
           iconColor: Colors.blue.withOpacity(0.3)
@@ -26,6 +30,7 @@ class _BusListBodyState extends State<BusListBody> {
       );
       _busCars.add(
         CarModel(
+          id: 'b',
           title: 'Lyn B',
           icon: Icons.directions_bus,
           iconColor: Colors.red.withOpacity(0.3)
@@ -33,6 +38,7 @@ class _BusListBodyState extends State<BusListBody> {
       );
       _busCars.add(
         CarModel(
+          id: 'c',
           title: 'Lyn C',
           icon: Icons.directions_bus,
           iconColor: Colors.purple.withOpacity(0.3)
@@ -40,9 +46,26 @@ class _BusListBodyState extends State<BusListBody> {
       );
       _busCars.add(
         CarModel(
+          id: 'd',
           title: 'Lyn D',
           icon: Icons.directions_bus,
           iconColor: Colors.green.withOpacity(0.3)
+        )
+      );
+      _busCars.add(
+        CarModel(
+          id: 'e',
+          title: 'Lyn E',
+          icon: Icons.directions_bus,
+          iconColor: Colors.white.withOpacity(0.3)
+        )
+      );
+      _busCars.add(
+        CarModel(
+          id: 'fg',
+          title: 'Lyn FG',
+          icon: Icons.directions_bus,
+          iconColor: Colors.black.withOpacity(0.3)
         )
       );
     });
@@ -82,7 +105,9 @@ class _BusListBodyState extends State<BusListBody> {
 class CarItem extends StatelessWidget {
   final CarModel car;
 
-  CarItem({@required this.car});
+  CarItem({
+    @required this.car
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -93,35 +118,40 @@ class CarItem extends StatelessWidget {
       color: kDarkColor.withOpacity(0.8)
     );
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: car.iconColor,
-                  borderRadius: BorderRadius.circular(5),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/passenger/bus-list-detail', arguments: BusListDetailScreenArguments(car.id));
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 20),
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: car.iconColor,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Icon(car.icon, color: Colors.grey[700],),
                 ),
-                child: Icon(car.icon, color: Colors.grey[700],),
-              ),
-              SizedBox(width: 20),
-              Text(car.title, style: carTitleStlye)
-            ],
-          ),
-          Container(
-            child: Icon(Icons.chevron_right),
-          )
-        ],
+                SizedBox(width: 20),
+                Text(car.title, style: carTitleStlye)
+              ],
+            ),
+            Container(
+              child: Icon(Icons.chevron_right),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CarModel {
+  String id;
   String title;
   Color iconColor;
   IconData icon;
 
   CarModel({
-    this.title,
-    this.icon,
-    this.iconColor
+    @required this.id,
+    @required this.title,
+    @required this.icon,
+    @required this.iconColor
   });
 }
