@@ -1,10 +1,5 @@
-// AIzaSyDiCInoDZEAuZeLRme9jZphpsN4KsHWenQ
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:teman_asik/constans.dart';
 
 class TestScreen extends StatefulWidget {
   @override
@@ -12,169 +7,82 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
-  final String apiKey = "AIzaSyDiCInoDZEAuZeLRme9jZphpsN4KsHWenQ";
-  GoogleMapController _controller;
-  Geolocator geoLocator = Geolocator();
-  PolylinePoints polylinePoints;
-  List<LatLng> polylineCoordinates = [];
-  Map<PolylineId, Polyline> polylines = {};
-
-  List<Marker> _markers = [];
-  LatLng currentLocation = LatLng(1.4941728, 115.9022409);
-  LatLng destination;
-  bool currentPosInited = false;
-
-  _createPolylines(LatLng start, LatLng destination) async {
-    // Initializing PolylinePoints
-    polylinePoints = PolylinePoints();
-
-    // Generating the list of coordinates to be used for
-    // drawing the polylines
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      apiKey, // Google Maps API Key
-      PointLatLng(start.latitude, start.longitude),
-      PointLatLng(destination.latitude, destination.longitude),
-      travelMode: TravelMode.walking,
-    );
-
-    // Adding the coordinates to the list
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        final latitude = point.latitude;
-        final longitude = point.longitude;
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        print('CURRENT POS: $latitude $longitude');
-      });
-    }
-
-    // Defining an ID
-    PolylineId id = PolylineId('poly');
-
-    // Initializing Polyline
-    Polyline polyline = Polyline(
-      polylineId: id,
-      color: Colors.red,
-      points: polylineCoordinates,
-      width: 3,
-    );
-
-    // Adding the polyline to the map
-    polylines[id] = polyline;
-    final points = result.points;
-    print('POS: $points');
-  }
-
-  void _locatePosition() async {
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((Position position) {
-      setState(() {
-        currentLocation = LatLng(position.latitude, position.longitude);
-      });
-      _goToTheLake();
-    });
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    setState(() {
-      _controller = (controller);
-      currentPosInited = true;
-    });
-    _locatePosition();
-  }
-
-  void _onMapTap(LatLng position) {
-    if (destination == null && currentPosInited == true) {
-      setState(() {
-        destination = position;
-        _markers.add(
-          Marker(
-            markerId: MarkerId('id-2'),
-            position: position,
-            infoWindow: InfoWindow(
-              title: "Lokasi Tujuan"
-            )
-          )
-        );
-      });
-    } else {
-      setState(() {
-        destination = null;
-        _markers.removeLast();
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _locatePosition();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        onTap: _onMapTap,
-        myLocationButtonEnabled: false,
-        myLocationEnabled: true,
-        zoomControlsEnabled: false,
-        zoomGesturesEnabled: true,
-        markers: Set.from(_markers),
-        polylines: Set<Polyline>.of(polylines.values),
-        initialCameraPosition: CameraPosition(
-          target: currentLocation,
-          zoom: 5
-        )
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          (destination != null) 
-           ? FloatingActionButton.extended(
-              onPressed: () {
-                _createPolylines(currentLocation, destination);
-              },
-              label: Text('Pilih Rute'),
-              icon: Icon(Icons.check),
-              backgroundColor: Colors.green,
+      body: SizedBox.expand(
+        child: Stack(
+          children: <Widget>[
+            Align(
+                alignment: Alignment.center,
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(0, 0),
+                  ),
+                )),
+            SizedBox.expand(
+              child: DraggableScrollableSheet(
+                initialChildSize: 0.25,
+                minChildSize: 0.12,
+                // maxChildSize: 0.8,
+                builder: (BuildContext c, s) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 10.0,
+                          )
+                        ]),
+                    child: ListView(
+                      controller: s,
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            height: 8,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Mau ke mana hari ini?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          title: Text('Lyn 1'),
+                        ),
+                        ListTile(
+                          title: Text('lyn 2'),
+                        ),
+                        ListTile(
+                          title: Text('lyn 3'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             )
-          : Container(),
-          SizedBox(height: 10),
-          (destination != null) 
-           ? FloatingActionButton.extended(
-              onPressed: _goToDestination,
-              label: Text('Tujuan'),
-              icon: Icon(Icons.location_pin),
-              backgroundColor: Colors.red,
-            )
-          : Container(),
-          SizedBox(height: 10),
-          FloatingActionButton.extended(
-            onPressed: _locatePosition,
-            label: Text('Lokasi Saya'),
-            icon: Icon(Icons.gps_fixed)
-          ),
-        ],
+          ],
+        ),
       ),
     );
-  }
-
-  Future<void> _goToTheLake() async {
-    final CameraPosition _kLake = CameraPosition(
-      target: currentLocation,
-      zoom: 19
-    );
-    final GoogleMapController controller = _controller;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
-
-  Future<void> _goToDestination() async {
-    final CameraPosition _kLake = CameraPosition(
-      target: destination,
-      zoom: 19
-    );
-    final GoogleMapController controller = _controller;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
 }
