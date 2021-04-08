@@ -1,11 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:teman_asik/screens/passenger/bus-stop/components/maps.dart';
 import 'package:teman_asik/screens/passenger/bus-stop/model/bus_stop_model.dart';
-
-import '../../../../constans.dart';
-import '../../../../constans.dart';
+import 'package:http/http.dart' as http;
 import '../../../../constans.dart';
 
 class BusStopBody extends StatefulWidget {
@@ -14,31 +15,113 @@ class BusStopBody extends StatefulWidget {
 }
 
 class _BusStopBodyState extends State<BusStopBody> {
-  List<BusStopModel> busStop = [
-    BusStopModel('Halte GKB Bundaran', LatLng(-7.522284, 112.413506)),
-    BusStopModel('Halte SMPN 1 Manyar', LatLng(-7.463156, 112.431951)),
-  ];
+  List<BusStopModel> busStop = [];
   
 
   TextEditingController searchController = new TextEditingController();
   String filter;
+  bool isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _getTerminals();
+  }
+
+  void _getTerminals () async {
+    try {
+      var url = Uri.parse('$apiUrl/terminals');
+      var httpResult = await http.get(url);
+      print(httpResult.statusCode);
+      var data = json.decode(httpResult.body);
+      List<BusStopModel> terminals = [];
+      int i = 0;
+      for (var item in data['data']) {
+        // print
+        terminals.add(BusStopModel(item['name'], LatLng(item['latitude'], item['longitude'])));
+        i++;
+      }
+      setState(() {
+        busStop = terminals;
+      });
+
+      Timer(Duration(seconds: 1), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } catch (e) {
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
+    final List<Widget> loadingShimmer = [];
+    int shimmerCount = ((MediaQuery.of(context).size.height - ((kDefaultPadding * 2) + 25.0 + (kDefaultPadding*3))) / 50).floor() - 3;
+    for(int i = 0; i < shimmerCount;i++) {
+      loadingShimmer.add(Shimmer.fromColors(
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.grey[200],
+        child: Container(
+          margin: EdgeInsets.only(bottom: 20),
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          height: 50,
+          width: MediaQuery.of(context).size.width,
+        ),
+      ));
+    }
+    if (isLoading) {
+      return SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(
+            top: kDefaultPadding,
+            left: kDefaultPadding,
+            right: kDefaultPadding
+          ),
+          color: kBackgroundColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Daftar Halte', style: kTitleStyle, textAlign: TextAlign.left),
+              SizedBox(height: 20,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: loadingShimmer,
+              )
+            ],
+          ),
+        )
+      );
+    }
     return SafeArea(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            margin: EdgeInsets.fromLTRB(kDefaultPadding, kDefaultPadding, kDefaultPadding, kDefaultPadding),
+            child: Text('Daftar Halte', style: kTitleStyle, textAlign: TextAlign.left),
+          ),
           Container(
             color: kLightColor,
             child: new Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.only(
+                left: kDefaultPadding-5,
+                right: kDefaultPadding-5,
+                bottom: kDefaultPadding / 2
+              ),
               child: new Card(
                 child: new ListTile(
                   leading: new Icon(Icons.search),
                   title: new TextField(
                     controller: searchController,
                     decoration: new InputDecoration(
-                        hintText: 'Search', border: InputBorder.none),
+                      hintText: 'Search',
+                      border: InputBorder.none,
+                    ),
                   ),
                   trailing: new IconButton(
                     icon: new Icon(Icons.cancel),
@@ -68,7 +151,7 @@ class _BusStopBodyState extends State<BusStopBody> {
                   },
                   child: Container(
                     height: 50,
-                    margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                    margin: EdgeInsets.fromLTRB(kDefaultPadding, 5, kDefaultPadding, 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: Colors.white,
@@ -81,12 +164,9 @@ class _BusStopBodyState extends State<BusStopBody> {
                             child: Icon(
                               Icons.place,
                               color: Colors.red,
+                              size: 18,
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Container(),
-                          flex: 1,
                         ),
                         Expanded(
                           flex: 4,

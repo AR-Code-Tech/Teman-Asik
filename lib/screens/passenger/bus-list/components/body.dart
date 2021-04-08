@@ -25,8 +25,9 @@ class _BusListBodyState extends State<BusListBody> {
 
   void _getBusCars () async {
     try {
-      var url = Uri.parse('${apiUrl}/transportations');
+      var url = Uri.parse('$apiUrl/transportations');
       var httpResult = await http.get(url);
+      print(httpResult.statusCode);
       var data = json.decode(httpResult.body);
       List<CarModel> cars = [];
       List listColors = [Colors.blue, Colors.red, Colors.yellow, Colors.green, Colors.grey[700]];
@@ -46,7 +47,7 @@ class _BusListBodyState extends State<BusListBody> {
         _busCars = cars;
       });
 
-      var checkLoading = Timer(Duration(seconds: 1), () {
+      Timer(Duration(seconds: 1), () {
         setState(() {
           isLoading = false;
         });
@@ -59,7 +60,8 @@ class _BusListBodyState extends State<BusListBody> {
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width;
     final List<Widget> loadingShimmer = [];
-    for(int i = 0; i < 4;i++) {
+    int shimmerCount = ((MediaQuery.of(context).size.height - ((kDefaultPadding * 2) + 25.0 + (kDefaultPadding*3))) / 70).floor() - 2;
+    for(int i = 0; i < shimmerCount;i++) {
       loadingShimmer.add(Shimmer.fromColors(
         baseColor: Colors.grey[300],
         highlightColor: Colors.grey[200],
@@ -68,9 +70,10 @@ class _BusListBodyState extends State<BusListBody> {
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(10),
           ),
           height: 60,
+          width: MediaQuery.of(context).size.width,
         ),
       ));
     }
@@ -79,8 +82,8 @@ class _BusListBodyState extends State<BusListBody> {
         child: Container(
           padding: EdgeInsets.only(
             top: kDefaultPadding,
-            left: kDefaultPadding * 2,
-            right: kDefaultPadding * 2
+            left: kDefaultPadding,
+            right: kDefaultPadding
           ),
           color: kBackgroundColor,
           child: Column(
@@ -101,8 +104,8 @@ class _BusListBodyState extends State<BusListBody> {
       child: Container(
         padding: EdgeInsets.only(
           top: kDefaultPadding,
-          left: kDefaultPadding * 2,
-          right: kDefaultPadding * 2
+          left: kDefaultPadding,
+          right: kDefaultPadding
         ),
         width: maxWidth,
         color: kBackgroundColor,
@@ -152,8 +155,8 @@ class CarItem extends StatelessWidget {
         Navigator.pushNamed(context, '/passenger/bus-list-detail', arguments: BusListDetailScreenArguments(car.id));
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 20),
-        padding: EdgeInsets.all(15),
+        margin: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
@@ -178,6 +181,7 @@ class CarItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(car.title, style: carTitleStlye),
+                      // Text((MediaQuery.of(context).size.width).toString(), style: carTitleStlye),
                       SizedBox(height: 5),
                       Text((car.description.length > 25) ? car.description.substring(0, 25) : car.description, style: carSubTitleStlye)
                     ],

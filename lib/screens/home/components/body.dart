@@ -39,7 +39,7 @@ class _HomeBodyState extends State<HomeBody> {
                 illustration: 'assets/images/illustrations/man-trolley.png',
                 color: Colors.orange[300],
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/passenger/home');
+                  Navigator.pushReplacementNamed(context, '/driver/login');
                 },
               ),
             ]),

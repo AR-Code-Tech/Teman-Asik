@@ -1,11 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:http/http.dart' as http;
-import '../../../constans.dart';
-import '../../../constans.dart';
-import '../../../constans.dart';
 import '../../../constans.dart';
 import 'models/route.dart';
 
@@ -84,7 +82,7 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
             ),
             SizedBox.expand(
               child: DraggableScrollableSheet(
-                initialChildSize: .35,
+                initialChildSize: .3,
                 minChildSize: 0.15,
                 maxChildSize: .5,
                 // maxChildSize: 0.8,
@@ -92,7 +90,6 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                   return Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 15,
-                      vertical: 10,
                     ),
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -111,8 +108,8 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                       children: <Widget>[
                         Center(
                           child: Container(
-                            height: 8,
-                            width: 50,
+                            height: 5,
+                            width: 40,
                             decoration: BoxDecoration(
                               color: Colors.grey,
                               borderRadius: BorderRadius.circular(5),
@@ -125,15 +122,6 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                           children: [
                             Row(
                               children: [
-                                IconButton(
-                                  icon: Icon(Icons.chevron_left),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  highlightColor: kPrimaryColor,
-                                  focusColor: kPrimaryColor,
-                                  splashColor: kPrimaryColor,
-                                ),
                                 Text(
                                   routeTitle,
                                   style: TextStyle(
@@ -174,28 +162,51 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                 },
               ),
             ),
+            SafeArea(
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: kDefaultPadding,
+                    left: 0,
+                    child: RawMaterialButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      elevation: 5.0,
+                      fillColor: kBackgroundColor,
+                      child: Icon(
+                        Icons.chevron_left,
+                        size: 24.0,
+                        color: kDarkColor,
+                      ),
+                      padding: EdgeInsets.all(5.0),
+                      shape: CircleBorder(),
+                    ),
+                  ),
+                  Positioned(
+                    top: kDefaultPadding,
+                    right: 0,
+                    child: RawMaterialButton(
+                      onPressed: () {
+                        _locatePosition();
+                      },
+                      elevation: 5.0,
+                      fillColor: kBackgroundColor,
+                      child: Icon(
+                        Icons.gps_fixed,
+                        size: 16.0,
+                        color: kDarkColor,
+                      ),
+                      padding: EdgeInsets.all(5.0),
+                      shape: CircleBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         )
       ),
-      // floatingActionButton: Column(
-      //   mainAxisAlignment: MainAxisAlignment.end,
-      //   crossAxisAlignment: CrossAxisAlignment.end,
-      //   children: [
-      //     FloatingActionButton.extended(
-      //       heroTag: '1',
-      //       onPressed: _locateRoute,
-      //       label: Text('Lihat Rute'),
-      //       icon: Icon(Icons.alt_route),
-      //       backgroundColor: Colors.green,
-      //     ),
-      //     SizedBox(height: 10),
-      //     FloatingActionButton.extended(
-      //         heroTag: '2',
-      //         onPressed: _locatePosition,
-      //         label: Text('Lokasi Saya'),
-      //         icon: Icon(Icons.gps_fixed)),
-      //   ],
-      // ),
     );
   }
 
