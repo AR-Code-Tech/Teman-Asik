@@ -1,12 +1,12 @@
-import 'dart:developer';
-
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:teman_asik/constans.dart';
+import '../../../../constans.dart';
 import '../models/car.dart';
 import '../../bus-list-detail/bus_list_detail_screen.dart';
-import 'package:fluttericon/linecons_icons.dart';
-import 'package:fluttericon/typicons_icons.dart';
-import 'package:fluttericon/fontelico_icons.dart';
+import 'package:http/http.dart' as http;
 
 class BusListBody extends StatefulWidget {
   @override
@@ -14,66 +14,89 @@ class BusListBody extends StatefulWidget {
 }
 
 class _BusListBodyState extends State<BusListBody> {
+  bool isLoading = true;
   List<CarModel> _busCars = [];
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _busCars.add(
-        CarModel(
-          id: 'a',
-          title: 'Lyn A',
-          icon: Icons.directions_bus,
-          iconColor: Colors.blue.withOpacity(0.3)
-        )
-      );
-      _busCars.add(
-        CarModel(
-          id: 'b',
-          title: 'Lyn B',
-          icon: Icons.directions_bus,
-          iconColor: Colors.red.withOpacity(0.3)
-        )
-      );
-      _busCars.add(
-        CarModel(
-          id: 'c',
-          title: 'Lyn C',
-          icon: Icons.directions_bus,
-          iconColor: Colors.purple.withOpacity(0.3)
-        )
-      );
-      _busCars.add(
-        CarModel(
-          id: 'd',
-          title: 'Lyn D',
-          icon: Icons.directions_bus,
-          iconColor: Colors.green.withOpacity(0.3)
-        )
-      );
-      _busCars.add(
-        CarModel(
-          id: 'e',
-          title: 'Lyn E',
-          icon: Icons.directions_bus,
-          iconColor: Colors.white.withOpacity(0.3)
-        )
-      );
-      _busCars.add(
-        CarModel(
-          id: 'fg',
-          title: 'Lyn FG',
-          icon: Icons.directions_bus,
-          iconColor: Colors.black.withOpacity(0.3)
-        )
-      );
-    });
+    _getBusCars();
+  }
+
+  void _getBusCars () async {
+    try {
+      var url = Uri.parse('${apiUrl}/transportations');
+      var httpResult = await http.get(url);
+      var data = json.decode(httpResult.body);
+      List<CarModel> cars = [];
+      List listColors = [Colors.blue, Colors.red, Colors.yellow, Colors.green, Colors.grey[700]];
+      int i = 0;
+      for (var item in data['data']) {
+        // print
+        cars.add(CarModel(
+            id: 'a',
+            title: item['name'],
+            description: item['description'],
+            icon: Icons.directions_bus,
+            iconColor: listColors[i % (listColors.length)].withOpacity(0.3)
+        ));
+        i++;
+      }
+      setState(() {
+        _busCars = cars;
+      });
+
+      var checkLoading = Timer(Duration(seconds: 1), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } catch (e) {
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width;
+    final List<Widget> loadingShimmer = [];
+    for(int i = 0; i < 4;i++) {
+      loadingShimmer.add(Shimmer.fromColors(
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.grey[200],
+        child: Container(
+          margin: EdgeInsets.only(bottom: 20),
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          height: 60,
+        ),
+      ));
+    }
+    if (isLoading) {
+      return SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(
+            top: kDefaultPadding,
+            left: kDefaultPadding * 2,
+            right: kDefaultPadding * 2
+          ),
+          color: kBackgroundColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Daftar Angkotan', style: kTitleStyle, textAlign: TextAlign.left),
+              SizedBox(height: 20,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: loadingShimmer,
+              )
+            ],
+          ),
+        )
+      );
+    }
     return SafeArea(
       child: Container(
         padding: EdgeInsets.only(
@@ -113,7 +136,13 @@ class CarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final carTitleStlye = TextStyle(
       fontFamily: kFontFamily,
-      fontSize: 20,
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: kDarkColor.withOpacity(0.8)
+    );
+    final carSubTitleStlye = TextStyle(
+      fontFamily: kFontFamily,
+      fontSize: 13,
       fontWeight: FontWeight.w500,
       color: kDarkColor.withOpacity(0.8)
     );
@@ -144,7 +173,16 @@ class CarItem extends StatelessWidget {
                   child: Icon(car.icon, color: Colors.grey[700],),
                 ),
                 SizedBox(width: 20),
-                Text(car.title, style: carTitleStlye)
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(car.title, style: carTitleStlye),
+                      SizedBox(height: 5),
+                      Text((car.description.length > 25) ? car.description.substring(0, 25) : car.description, style: carSubTitleStlye)
+                    ],
+                  ),
+                )
               ],
             ),
             Container(

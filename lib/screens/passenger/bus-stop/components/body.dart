@@ -4,6 +4,10 @@ import 'package:teman_asik/constans.dart';
 import 'package:teman_asik/screens/passenger/bus-stop/components/maps.dart';
 import 'package:teman_asik/screens/passenger/bus-stop/model/bus_stop_model.dart';
 
+import '../../../../constans.dart';
+import '../../../../constans.dart';
+import '../../../../constans.dart';
+
 class BusStopBody extends StatefulWidget {
   @override
   _BusStopBodyState createState() => _BusStopBodyState();
@@ -66,7 +70,7 @@ class _BusStopBodyState extends State<BusStopBody> {
                     height: 50,
                     margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(5),
                       color: Colors.white,
                     ),
                     child: Row(
@@ -84,13 +88,22 @@ class _BusStopBodyState extends State<BusStopBody> {
                           child: Container(),
                           flex: 1,
                         ),
-                        Expanded(flex: 4, child: Text('${busStop[index].busStopName}')),
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            '${busStop[index].busStopName}',
+                            style: TextStyle(
+                              fontFamily: kFontFamily,
+                              color: kDarkColor
+                            ),
+                          )
+                        ),
                         Expanded(
                           child: Container(),
                           flex: 1,
                         ),
                         Expanded(
-                          child: Icon(Icons.arrow_forward_ios),
+                          child: Icon(Icons.arrow_forward_ios, color: kDarkColor, size: 15,),
                           flex: 1,
                         ),
                       ],

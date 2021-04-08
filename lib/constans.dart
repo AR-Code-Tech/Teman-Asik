@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 // light theme + blue as primary color
 const String kAppTitle = "Teman Asik";
+const String apiUrl = "http://localhost:8000/api";
 
 const double kDefaultPadding = 20.0;
 

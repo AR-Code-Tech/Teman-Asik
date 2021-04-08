@@ -83,20 +83,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_image:
-    dependency: transitive
-    description:
-      name: flutter_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
-  flutter_map:
-    dependency: "direct main"
-    description:
-      name: flutter_map
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.12.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -205,13 +191,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1"
-  lists:
-    dependency: transitive
+  loader_overlay:
+    dependency: "direct main"
     description:
-      name: lists
+      name: loader_overlay
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.6"
+    version: "2.0.0"
   logging:
     dependency: transitive
     description:
@@ -233,13 +219,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0"
-  mgrs_dart:
-    dependency: transitive
-    description:
-      name: mgrs_dart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   path:
     dependency: transitive
     description:
@@ -282,27 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  positioned_tap_detector:
-    dependency: transitive
+  shimmer:
+    dependency: "direct main"
     description:
-      name: positioned_tap_detector
+      name: shimmer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.3"
-  proj4dart:
-    dependency: transitive
-    description:
-      name: proj4dart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.5"
-  quiver:
-    dependency: transitive
-    description:
-      name: quiver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.5"
+    version: "1.1.2"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -357,20 +322,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.19"
-  transparent_image:
-    dependency: transitive
-    description:
-      name: transparent_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
-  tuple:
-    dependency: transitive
-    description:
-      name: tuple
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   typed_data:
     dependency: transitive
     description:
@@ -378,13 +329,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0"
-  unicode:
-    dependency: transitive
-    description:
-      name: unicode
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.4"
   validate:
     dependency: transitive
     description:
@@ -399,13 +343,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  wkt_parser:
-    dependency: transitive
-    description:
-      name: wkt_parser
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.7"
   xml:
     dependency: transitive
     description:
@@ -415,4 +352,4 @@ packages:
     version: "4.5.1"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=2.0.0"
+  flutter: ">=1.24.0-10.1.pre"
