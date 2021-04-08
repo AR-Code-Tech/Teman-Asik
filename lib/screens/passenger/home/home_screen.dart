@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
+import 'package:teman_asik/screens/passenger/bus-route/bus_route_screen.dart';
 import 'package:teman_asik/screens/passenger/bus-stop/bus_stop_screen.dart';
 import 'package:teman_asik/screens/passenger/bus-list/bus_list_screen.dart';
 
@@ -14,13 +15,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     BusListScreen(),
-    Text(
-      'Index 1',
-      style: optionStyle,
-    ),
+    BusRouteScreen(),
     BusStopScreen(),
     Text(
-      'Index 3',
+      'Faq 2',
       style: optionStyle,
     ),
     Container(),
