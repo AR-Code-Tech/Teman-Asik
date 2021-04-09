@@ -16,19 +16,18 @@ class BusStopBody extends StatefulWidget {
 
 class _BusStopBodyState extends State<BusStopBody> {
   List<BusStopModel> busStop = [];
-  
 
   TextEditingController searchController = new TextEditingController();
   String filter;
   bool isLoading = true;
-  
+
   @override
   void initState() {
     super.initState();
     _getTerminals();
   }
 
-  void _getTerminals () async {
+  void _getTerminals() async {
     try {
       var url = Uri.parse('$apiUrl/terminals');
       var httpResult = await http.get(url);
@@ -38,7 +37,8 @@ class _BusStopBodyState extends State<BusStopBody> {
       int i = 0;
       for (var item in data['data']) {
         // print
-        terminals.add(BusStopModel(item['name'], LatLng(item['latitude'], item['longitude'])));
+        terminals.add(BusStopModel(
+            item['name'], LatLng(item['latitude'], item['longitude'])));
         i++;
       }
       setState(() {
@@ -50,15 +50,14 @@ class _BusStopBodyState extends State<BusStopBody> {
           isLoading = false;
         });
       });
-    } catch (e) {
-    }
+    } catch (e) {}
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> loadingShimmer = [];
-    int shimmerCount = ((MediaQuery.of(context).size.height - ((kDefaultPadding * 2) + 25.0 + (kDefaultPadding*3))) / 50).floor() - 3;
-    for(int i = 0; i < shimmerCount;i++) {
+    int shimmerCount = ((MediaQuery.of(context).size.height -((kDefaultPadding * 2) + 2.0 + (kDefaultPadding * 3))) /50).floor() -5;
+    for (int i = 0; i < shimmerCount; i++) {
       loadingShimmer.add(Shimmer.fromColors(
         baseColor: Colors.grey[300],
         highlightColor: Colors.grey[200],
@@ -76,25 +75,29 @@ class _BusStopBodyState extends State<BusStopBody> {
     }
     if (isLoading) {
       return SafeArea(
-        child: Container(
+        child: Padding(
           padding: EdgeInsets.only(
             top: kDefaultPadding,
             left: kDefaultPadding,
             right: kDefaultPadding
           ),
-          color: kBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Daftar Halte', style: kTitleStyle, textAlign: TextAlign.left),
-              SizedBox(height: 20,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: loadingShimmer,
+              SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: loadingShimmer,
+                ),
               )
             ],
           ),
-        )
+        ),
       );
     }
     return SafeArea(
@@ -102,17 +105,18 @@ class _BusStopBodyState extends State<BusStopBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.fromLTRB(kDefaultPadding, kDefaultPadding, kDefaultPadding, kDefaultPadding),
-            child: Text('Daftar Halte', style: kTitleStyle, textAlign: TextAlign.left),
+            margin: EdgeInsets.fromLTRB(kDefaultPadding, kDefaultPadding,
+                kDefaultPadding, kDefaultPadding),
+            child: Text('Daftar Halte',
+                style: kTitleStyle, textAlign: TextAlign.left),
           ),
           Container(
             color: kLightColor,
             child: new Padding(
               padding: EdgeInsets.only(
-                left: kDefaultPadding-5,
-                right: kDefaultPadding-5,
-                bottom: kDefaultPadding / 2
-              ),
+                  left: kDefaultPadding - 5,
+                  right: kDefaultPadding - 5,
+                  bottom: kDefaultPadding / 2),
               child: new Card(
                 child: new ListTile(
                   leading: new Icon(Icons.search),
@@ -134,6 +138,7 @@ class _BusStopBodyState extends State<BusStopBody> {
             ),
           ),
           Expanded(
+            flex: 2,
             child: ListView.builder(
               itemCount: busStop.length,
               itemBuilder: (BuildContext context, int index) {
@@ -151,7 +156,8 @@ class _BusStopBodyState extends State<BusStopBody> {
                   },
                   child: Container(
                     height: 50,
-                    margin: EdgeInsets.fromLTRB(kDefaultPadding, 5, kDefaultPadding, 5),
+                    margin: EdgeInsets.fromLTRB(
+                        kDefaultPadding, 5, kDefaultPadding, 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: Colors.white,
@@ -169,21 +175,22 @@ class _BusStopBodyState extends State<BusStopBody> {
                           ),
                         ),
                         Expanded(
-                          flex: 4,
-                          child: Text(
-                            '${busStop[index].busStopName}',
-                            style: TextStyle(
-                              fontFamily: kFontFamily,
-                              color: kDarkColor
-                            ),
-                          )
-                        ),
+                            flex: 4,
+                            child: Text(
+                              '${busStop[index].busStopName}',
+                              style: TextStyle(
+                                  fontFamily: kFontFamily, color: kDarkColor),
+                            )),
                         Expanded(
                           child: Container(),
                           flex: 1,
                         ),
                         Expanded(
-                          child: Icon(Icons.arrow_forward_ios, color: kDarkColor, size: 15,),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: kDarkColor,
+                            size: 15,
+                          ),
                           flex: 1,
                         ),
                       ],

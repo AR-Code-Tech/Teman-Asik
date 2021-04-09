@@ -1,3 +1,5 @@
+import 'package:teman_asik/screens/driver/home/home_driver.dart';
+
 import 'screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/passenger/home/home_screen.dart';
@@ -10,5 +12,6 @@ final Map<String, Widget Function(BuildContext)> routes = {
   '/passenger/home': (ctx)  => PassengerHomeScreen(),
   '/passenger/bus-list-detail': (ctx)  => BusListDetailScreen(),
   '/driver/login': (ctx)  => LoginDriver(),
+  '/driver/Home': (ctx)  => HomeDriverScreen(),
   '/test': (ctx) => TestScreen()
 };
