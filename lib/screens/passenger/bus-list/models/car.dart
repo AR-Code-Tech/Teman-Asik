@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CarModel {
-  String id;
+  int id;
   String title;
   String description;
   Color iconColor;

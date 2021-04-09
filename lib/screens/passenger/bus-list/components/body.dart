@@ -35,7 +35,7 @@ class _BusListBodyState extends State<BusListBody> {
       for (var item in data['data']) {
         // print
         cars.add(CarModel(
-            id: 'a',
+            id: item['id'],
             title: item['name'],
             description: item['description'],
             icon: Icons.directions_bus,
@@ -53,6 +53,7 @@ class _BusListBodyState extends State<BusListBody> {
         });
       });
     } catch (e) {
+      print(e);
     }
   }
 
@@ -153,6 +154,12 @@ class CarItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, '/passenger/bus-list-detail', arguments: BusListDetailScreenArguments(car.id));
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => BusListDetailScreen(routeId: car.id),
+        //   ),
+        // );
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 10),

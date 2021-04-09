@@ -11,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
 class BusListDetailScreenArguments {
-  final String id;
+  final int id;
   BusListDetailScreenArguments(this.id);
 }
 
@@ -24,8 +24,12 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
   GoogleMapController _googleMapController;
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
-  LatLng centerPos;
+  LatLng centerPos = LatLng(0, 0);
   BusListDetailScreenArguments routeArgs;
+  bool isLoading = true;
+  String routeTitle = "";
+  String routeDescription = "";
+  int cint = 1;
 
   @override
   void initState() {
@@ -37,7 +41,6 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
     setState(() {
       _googleMapController = controller;
     });
-    _getRoute();
   }
 
   void _locatePosition() async {
@@ -55,14 +58,79 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
         CameraPosition(target: centerPos, zoom: 15)));
   }
 
+  void _getDetail(int id) async {
+    List<RouteModel> routes = [];
+
+    try {
+      var url = Uri.parse('$apiUrl/transportations/$id');
+      var httpResult = await http.get(url);
+      var body = json.decode(httpResult.body);
+      var data = body["data"];
+
+      // 
+      setState(() {
+        routeTitle = data["name"];
+        routeDescription = data["description"];
+      });
+
+      // route list
+      // print(data["routes"]);
+      List<LatLng> routesLatLngList = [];
+      for (var route in data["routes"]) {
+        try {
+          var rute = RouteModel(lat: route["latitude"], lng: route["longitude"], name: "");
+          routes.add(rute);
+          routesLatLngList.add(LatLng(route["latitude"], route["longitude"]));
+        } catch (e) {
+        }
+      }
+      print(routesLatLngList.length);
+      setState(() {
+        var p = Polyline(
+            polylineId: PolylineId('rute'),
+            visible: true,
+            points: List.from(routesLatLngList),
+            color: Colors.blue,
+            width: 4);
+        _polylines.add(p);
+        
+        centerPos = (routesLatLngList.length > 0) 
+          ? routesLatLngList.first
+          : LatLng(0, 0);
+      });
+
+      setState(() {
+        isLoading = false;
+      });
+      Timer(Duration(milliseconds: 500), () => _locateRoute());
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final BusListDetailScreenArguments args = ModalRoute.of(context).settings.arguments;
-    final routeTitle = 'Rute Lyn ${args.id.toUpperCase()}';
-    final routeDescription = 'Trmn. Gub. Suryo -- Nyai Ageng Pinatih -- Basuki Rahmat -- Pahlawan -- Veteran -- Trmn. Gulomantung -- (PP)';
     setState(() {
       routeArgs = args;
     });
+    if (cint == 1) {
+      _getDetail(args.id);
+      cint++;
+    }
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: Container(
+          color: kBackgroundColor,
+          child: Center(
+            child: Text(
+              'Loading...'
+            ),
+          ),
+        )
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: Container(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:teman_asik/screens/home/home_screen.dart';
 import 'constans.dart';
 import 'routes.dart';
 
