@@ -27,7 +27,6 @@ class _BusListBodyState extends State<BusListBody> {
     try {
       var url = Uri.parse('$apiUrl/transportations');
       var httpResult = await http.get(url);
-      print(httpResult.statusCode);
       var data = json.decode(httpResult.body);
       List<CarModel> cars = [];
       List listColors = [Colors.blue, Colors.red, Colors.yellow, Colors.green, Colors.grey[700]];
@@ -131,9 +130,11 @@ class _BusListBodyState extends State<BusListBody> {
 
 class CarItem extends StatelessWidget {
   final CarModel car;
+  final Function onPress;
 
   CarItem({
-    @required this.car
+    @required this.car,
+    this.onPress
   });
 
   @override
@@ -153,6 +154,10 @@ class CarItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        if (onPress != null) {
+          return onPress();
+        }
+
         Navigator.pushNamed(context, '/passenger/bus-list-detail', arguments: BusListDetailScreenArguments(car.id));
         // Navigator.push(
         //   context,

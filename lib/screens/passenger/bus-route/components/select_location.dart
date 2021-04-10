@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:google_place/google_place.dart';
+import 'package:teman_asik/screens/passenger/bus-route/components/search_place.dart';
 import '../../../../constans.dart';
+import 'bus_route_body.dart';
 
 class SelectLocationScreen extends StatefulWidget {
   @override
@@ -35,7 +37,12 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
         destinationPos = null;
         _markers.removeWhere((marker) => marker.markerId.value == 'destination');
       }
+      _addDestination(pos);
+    });
+  }
 
+  void _addDestination (LatLng pos) {
+    setState(() {
       _markers.add(
         Marker(
           markerId: MarkerId('destination'),
@@ -47,48 +54,43 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     });
   }
 
-  void _locatePosition() async {
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
+  void _focusCameraMap(LatLng position, double zoom) {
+    setState(() {
       _googleMapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(position.latitude, position.longitude),
-              zoom: 17
+              zoom: zoom
           )
         )
       );
     });
   }
 
-  void _searchLocation() async {
-      Prediction prediction = await PlacesAutocomplete.show(
-        context: context,
-        apiKey: kGoogleApiKey,
-        language: "id",
-        mode: Mode.overlay,
-        components: [new Component(Component.country, "id")]
-      );
-      displayPrediction(prediction);
-      print(prediction);
-    try {
-    } catch (e) {
-      print(e);
-    }
+  void _locatePosition() async {
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      setState(() {
+        LatLng pos = LatLng(position.latitude, position.longitude);
+        _focusCameraMap(pos, 17);
+        myPos = pos;
+      });
+    });
   }
 
-  Future<Null> displayPrediction(Prediction p) async {
-    if (p != null) {
-      PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
-
-      var placeId = p.placeId;
-      double lat = detail.result.geometry.location.lat;
-      double lng = detail.result.geometry.location.lng;
-
-      // var address = await Geocoder.local.findAddressesFromQuery(p.description);
-
-      print(lat);
-      print(lng);
+  void _searchLocation() async {
+    final LatLng result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchPlace()
+      )
+    );
+    if (result != null) {
+      _addDestination(result);
+      _focusCameraMap(
+        result,
+        17
+      );
     }
   }
 
@@ -138,7 +140,13 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
           SizedBox(height: 10),
           FloatingActionButton.extended(
             heroTag: '3',
-            onPressed: _locatePosition,
+            onPressed: () {
+              LocationSelectData data = LocationSelectData(
+                origin: myPos,
+                destination: destinationPos
+              );
+              Navigator.pop(context, data);
+            },
             label: Text('Pilih'),
             icon: Icon(Icons.check),
             backgroundColor: Colors.green,

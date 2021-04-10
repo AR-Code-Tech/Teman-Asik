@@ -154,6 +154,7 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final BusListDetailScreenArguments args = ModalRoute.of(context).settings.arguments;
+    final maxHeight = MediaQuery.of(context).size.height;
     setState(() {
       routeArgs = args;
     });
@@ -180,21 +181,24 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
         color: kBackgroundColor,
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.center,
-              child: GoogleMap(
-                onMapCreated: _onMapCreated,
-                markers: _markers,
-                polylines: _polylines,
-                initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 15),
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
+            SizedBox(
+              height: (maxHeight / 3) * 2.1,
+              child: Align(
+                alignment: Alignment.center,
+                child: GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  markers: _markers,
+                  polylines: _polylines,
+                  initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 15),
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                ),
               ),
             ),
             SizedBox.expand(
               child: DraggableScrollableSheet(
                 initialChildSize: .3,
-                minChildSize: 0.15,
+                minChildSize: .3,
                 maxChildSize: .4,
                 // maxChildSize: 0.8,
                 builder: (BuildContext c, s) {
