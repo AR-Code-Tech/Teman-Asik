@@ -9,12 +9,3 @@ class BusRouteScreen extends StatelessWidget {
     );
   }
 }
-
-final List<double> lat = <double>[
-    -7.522284,
-    -7.463156,
-  ];
-  final List<double> lng = <double>[
-    112.413506,
-    112.431951,
-  ];

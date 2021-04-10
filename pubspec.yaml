@@ -31,6 +31,9 @@ dependencies:
   fluttericon: ^2.0.0
   loader_overlay: ^2.0.0
   shimmer: ^1.1.2
+  google_maps_webservice: ^0.0.19
+  flutter_google_places: ^0.3.0
+  
 
 
   # The following adds the Cupertino Icons font to your application.

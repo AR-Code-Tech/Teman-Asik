@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:http/http.dart' as http;
 import '../../../constans.dart';
@@ -30,6 +33,9 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
   String routeTitle = "";
   String routeDescription = "";
   int cint = 1;
+  // BitmapDescriptor terminalIcon;
+
+
 
   @override
   void initState() {
@@ -40,22 +46,33 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _googleMapController = controller;
+      // getBytesFromAsset('assets/icons/bus-stop-marker.png', 100).then((e) => terminalIcon = e);
     });
+    // var b = await BitmapDescriptor.fromAssetImage(
+    //   ImageConfiguration(
+    //     size: Size(0, 0),
+    //   ),
+    //   'assets/icons/bus-stop-marker.png'
+    // );
   }
 
   void _locatePosition() async {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) {
-      _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+      _googleMapController.animateCamera(
+        CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(position.latitude, position.longitude),
-              zoom: 17)));
+              zoom: 17
+          )
+        )
+      );
     });
   }
 
   void _locateRoute() {
     _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: centerPos, zoom: 15)));
+        CameraPosition(target: centerPos, zoom: 14)));
   }
 
   void _getDetail(int id) async {
@@ -74,7 +91,6 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
       });
 
       // route list
-      // print(data["routes"]);
       List<LatLng> routesLatLngList = [];
       for (var route in data["routes"]) {
         try {
@@ -84,27 +100,54 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
         } catch (e) {
         }
       }
-      print(routesLatLngList.length);
       setState(() {
         var p = Polyline(
-            polylineId: PolylineId('rute'),
-            visible: true,
-            points: List.from(routesLatLngList),
-            color: Colors.blue,
-            width: 4);
+          polylineId: PolylineId('rute'),
+          visible: true,
+          points: List.from(routesLatLngList),
+          color: Colors.blue,
+          width: 4
+        );
         _polylines.add(p);
         
         centerPos = (routesLatLngList.length > 0) 
           ? routesLatLngList.first
           : LatLng(0, 0);
-      });
 
-      setState(() {
         isLoading = false;
       });
-      Timer(Duration(milliseconds: 500), () => _locateRoute());
+
+      await _getHalte();
+
+      Timer(Duration(seconds: 1), () => _locateRoute());
+
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> _getHalte() async {
+    try {
+      var url = Uri.parse('$apiUrl/terminals');
+      var httpResult = await http.get(url);
+      var body = json.decode(httpResult.body);
+      var data = body["data"];
+      for (var terminal in data) {
+        setState(() {
+          _markers.add(
+            Marker(
+              markerId: MarkerId('terminal-${terminal['id']}'),
+              position: LatLng(terminal['latitude'], terminal['longitude']),
+              infoWindow: InfoWindow(
+                title: terminal['name'],
+              ),
+              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
+              // icon: BitmapDescriptor.fromBytes(terminalIcon)
+            )
+          );
+        });
+      }
+    } catch (e) {
     }
   }
 
@@ -152,7 +195,7 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
               child: DraggableScrollableSheet(
                 initialChildSize: .3,
                 minChildSize: 0.15,
-                maxChildSize: .5,
+                maxChildSize: .4,
                 // maxChildSize: 0.8,
                 builder: (BuildContext c, s) {
                   return Container(
@@ -276,42 +319,5 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
         )
       ),
     );
-  }
-
-  Future<List<RouteModel>> _getRoute() async {
-    List<RouteModel> routes = [];
-    
-    try {
-      var url = Uri.parse('http://68.183.227.243:3001/routes?rute=Rute%20Lyn%20A');
-      var httpResult = await http.get(url);
-      var data = json.decode(httpResult.body);
-      List<LatLng> routesLatLngList = [];
-      for (var route in data) {
-        var rute =
-            RouteModel(lat: route["lat"], lng: route["lng"], name: route["nama"]);
-        routes.add(rute);
-        routesLatLngList.add(LatLng(route["lat"], route["lng"]));
-      }
-
-      setState(() {
-        var p = Polyline(
-            polylineId: PolylineId('rute'),
-            visible: true,
-            points: List.from(routesLatLngList),
-            color: Colors.blue,
-            width: 4);
-        _polylines.add(p);
-        
-        centerPos = (routesLatLngList.length > 0) 
-          ? routesLatLngList.first
-          : LatLng(0, 0);
-      });
-
-      _locateRoute();
-    } catch (e) {
-      print(e);
-    }
-
-    return routes;
   }
 }
