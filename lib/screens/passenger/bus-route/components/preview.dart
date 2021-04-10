@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:teman_asik/constans.dart';
 
 class RouteModel {
   double lat;
@@ -63,6 +65,73 @@ class _PreviewScreenState extends State<PreviewScreen> {
         width: 4
       );
       _polylines.add(p);
+
+      List<LatLng> routeToDestination = [];
+      bool continueAdd = false;
+      LatLng sourceLocation = closestPointFromOrigin;
+      LatLng destLocation = closestPointFromDestination;
+      LatLng temp;
+      if (sourceLocation.latitude > destLocation.latitude) {
+        temp = sourceLocation;
+        sourceLocation = destLocation;
+        destLocation = temp;
+      }
+    });
+
+
+    _getLineOrigin();
+    _getLineDestination();
+  }
+
+  void _getLineDestination() async {
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      kGoogleApiKey,
+      PointLatLng(destination.latitude, destination.longitude),
+      PointLatLng(closestPointFromDestination.latitude, closestPointFromDestination.longitude),
+      travelMode: TravelMode.walking
+    );
+    List<LatLng> routeTravel = [];
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng pos) {
+        routeTravel.add(LatLng(pos.latitude, pos.longitude));
+      });
+    }
+    var p2 = Polyline(
+      polylineId: PolylineId('rute-destination'),
+      visible: true,
+      points: List.from(routeTravel),
+      color: Colors.orange,
+      width: 4
+    );
+    setState(() {
+      _polylines.add(p2);
+    });
+  }
+
+  void _getLineOrigin() async {
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      kGoogleApiKey,
+      PointLatLng(origin.latitude, origin.longitude),
+      PointLatLng(closestPointFromOrigin.latitude, closestPointFromOrigin.longitude),
+      travelMode: TravelMode.walking
+    );
+    List<LatLng> routeTravel = [];
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng pos) {
+        routeTravel.add(LatLng(pos.latitude, pos.longitude));
+      });
+    }
+    var p2 = Polyline(
+      polylineId: PolylineId('rute-origin'),
+      visible: true,
+      points: List.from(routeTravel),
+      color: Colors.orange,
+      width: 4
+    );
+    setState(() {
+      _polylines.add(p2);
     });
   }
 
@@ -107,11 +176,37 @@ class _PreviewScreenState extends State<PreviewScreen> {
         )
       );
     });
+
+
+    // 
+    LatLng sourceLocation = origin;
+    LatLng destLocation = destination;
+    LatLng temp;
+    if (sourceLocation.latitude > destLocation.latitude) {
+      temp = sourceLocation;
+      sourceLocation = destLocation;
+      destLocation = temp;
+    }
+    LatLngBounds bound = LatLngBounds(southwest: sourceLocation, northeast: destLocation);
+    CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+    controller.animateCamera(u2).then((void v) {
+      check(u2, controller);
+    });
+  }
+
+  void check(CameraUpdate u, GoogleMapController c) async {
+    c.animateCamera(u);
+    _googleMapController.animateCamera(u);
+    LatLngBounds l1 = await c.getVisibleRegion();
+    LatLngBounds l2 = await c.getVisibleRegion();
+
+    if (l1.southwest.latitude == -100 || l2.southwest.latitude == -100) {
+      check(u, c);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(origin);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -127,6 +222,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
             target: origin,
             zoom: 15
           ),
+          zoomControlsEnabled: true,
+          compassEnabled: true,
+          zoomGesturesEnabled: true,
           myLocationEnabled: true,
         ),
       ),

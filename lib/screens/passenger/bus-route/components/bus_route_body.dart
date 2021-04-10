@@ -7,8 +7,114 @@ import 'package:teman_asik/screens/passenger/bus-route/components/preview.dart';
 import 'package:teman_asik/screens/passenger/bus-route/components/select_location.dart';
 import '../../../../constans.dart';
 import 'package:http/http.dart' as http;
-import '../../bus-list/models/car.dart';
-import '../../bus-list/components/body.dart';
+
+class CarItem extends StatelessWidget {
+  final CarModel car;
+  final Function onPress;
+  bool bestWay = false;
+
+  CarItem({
+    @required this.car,
+    @required this.bestWay,
+    this.onPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final carTitleStlye = TextStyle(
+      fontFamily: kFontFamily,
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: kDarkColor.withOpacity(0.8)
+    );
+    final carSubTitleStlye = TextStyle(
+      fontFamily: kFontFamily,
+      fontSize: 13,
+      fontWeight: FontWeight.w500,
+      color: kDarkColor.withOpacity(0.8)
+    );
+
+    return GestureDetector(
+      onTap: () {
+        if (onPress != null) {
+          return onPress();
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: car.iconColor,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Icon(car.icon, color: Colors.grey[700],),
+                ),
+                SizedBox(width: 20),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(car.title, style: carTitleStlye),
+                      (bestWay) ? Column(
+                        children: [
+                          SizedBox(height: 5),
+                          Text(
+                            'Paling disarankan.',
+                            style: TextStyle(
+                              color: Colors.red[300],
+                              fontFamily: kFontFamily
+                            ),
+                          )
+                        ],
+                      ) : Container()
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Container(
+              child: Icon(Icons.chevron_right),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CarModel {
+  int id;
+  String title;
+  String description;
+  Color iconColor;
+  IconData icon;
+  List<LatLng> routes = [];
+  LatLng closestPointFromOrigin;
+  LatLng closestPointFromDestination;
+
+  CarModel({
+    @required this.id,
+    @required this.title,
+    @required this.description,
+    @required this.icon,
+    @required this.iconColor,
+    @required this.routes,
+    @required this.closestPointFromOrigin,
+    @required this.closestPointFromDestination,
+  });
+}
 
 class BusRouteBody extends StatefulWidget {
   @override
@@ -28,13 +134,12 @@ class LocationSelectData {
 class _BusRouteBodyState extends State<BusRouteBody> {
   LatLng myPos;
   LatLng destinationPos;
-  LatLng closestPointFromOrigin;
-  LatLng closestPointFromDestination;
   List<CarModel> _busList = [];
   List<LatLng> _routes = [];
   TextEditingController _controllerOrigin = new TextEditingController();
   TextEditingController _controllerDestination = new TextEditingController();
   bool isLoading = true;
+  int bestScoreTransportation;
 
   @override
   void initState() {
@@ -84,35 +189,31 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         var url = Uri.parse('$apiUrl/navigation?origin=$originUrl&destination=$destinationUrl');
         var httpResult = await http.get(url);
         var data = json.decode(httpResult.body);
-        var item = data['transportation'];
         List<CarModel> cars = [];
-        cars.add(CarModel(
-          id: item['id'],
-          title: item['name'],
-          description: item['description'],
-          icon: Icons.directions_bus,
-          iconColor: Colors.blue.withOpacity(0.3)
-        ));
 
-        // 
-        List<RouteModel> routes = [];
-        List<LatLng> routesLatLngList = [];
-        for (var route in data["transportation"]["routes"]) {
-          try {
-            var rute = RouteModel(lat: route["latitude"], lng: route["longitude"], name: "");
-            routes.add(rute);
-            routesLatLngList.add(LatLng(route["latitude"], route["longitude"]));
-          } catch (e) {
+        for(var item in data['transportations']) {
+          List<LatLng> routes = [];
+          for (var route in item["routes"]) {
+            try {
+              var rute = LatLng(route["latitude"], route["longitude"]);
+              routes.add(rute);
+            } catch (e) {
+            }
           }
-        }
-        
+          cars.add(CarModel(
+            id: item['id'],
+            title: item['name'],
+            description: item['description'],
+            icon: Icons.directions_bus,
+            iconColor: Colors.blue.withOpacity(0.3),
+            routes: routes,
+            closestPointFromOrigin: LatLng(item['closestPointFromOrigin']['latitude'], item['closestPointFromOrigin']['longitude']),
+            closestPointFromDestination: LatLng(item['closestPointFromDestination']['latitude'], item['closestPointFromDestination']['longitude']),
+          ));
+        }        
         
         setState(() {
-          _routes = routesLatLngList;
-
-          closestPointFromOrigin = LatLng(data['closestPointFromOrigin']['lat'], data['closestPointFromOrigin']['lng']);
-          closestPointFromDestination = LatLng(data['closestPointFromDestination']['lat'], data['closestPointFromDestination']['lng']);
-          
+          bestScoreTransportation = data['best']['id'];
           _busList = cars;
           _controllerOrigin.text = bodyOrigin["results"][0]["formatted_address"];
           _controllerDestination.text = bodyDestination["results"][0]["formatted_address"];
@@ -163,7 +264,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
             Text('Cari Angkot', style: kTitleStyle, textAlign: TextAlign.left),
             SizedBox(height: 20,),
             CupertinoFormSection(
-              header: Text('Mencari Angkot'),
+              header: Text('Masukan Lokasi'),
               children: <Widget>[
                 CupertinoFormRow(
                   child: CupertinoTextFormFieldRow(
@@ -216,6 +317,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                           children: _busList.map((CarModel car) {
                             return CarItem(
                               car: car,
+                              bestWay: (car.id == bestScoreTransportation),
                               onPress: () async {
                                 final result = await Navigator.push(
                                   context,
@@ -223,9 +325,9 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                                     builder: (context) => PreviewScreen(
                                       origin: myPos,
                                       destination: destinationPos,
-                                      closestPointFromDestination: closestPointFromDestination,
-                                      closestPointFromOrigin: closestPointFromOrigin,
-                                      routes: _routes,
+                                      closestPointFromDestination: car.closestPointFromDestination,
+                                      closestPointFromOrigin: car.closestPointFromOrigin,
+                                      routes: car.routes,
                                     )
                                   )
                                 );
