@@ -31,7 +31,6 @@ class _BusStopBodyState extends State<BusStopBody> {
     try {
       var url = Uri.parse('$apiUrl/terminals');
       var httpResult = await http.get(url);
-      print(httpResult.statusCode);
       var data = json.decode(httpResult.body);
       List<BusStopModel> terminals = [];
       int i = 0;

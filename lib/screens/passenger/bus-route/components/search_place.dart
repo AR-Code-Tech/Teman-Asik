@@ -27,14 +27,14 @@ class _SearchPlaceState extends State<SearchPlace> {
       super.dispose();
   }
 
-  void _selectPlace(BuildContext context, int index) async {
+  Future<void> _selectPlace(BuildContext context, int index) async {
     var details = await googlePlace.details.get(_prediction[index].placeId);
     Navigator.pop(context, LatLng(details.result.geometry.location.lat, details.result.geometry.location.lng));
   }
 
   void _onSearchTextUpdate(String query) async {
     if (_debounce?.isActive ?? false) _debounce.cancel();
-    _debounce = Timer(Duration(milliseconds: 100), () async {
+    _debounce = Timer(Duration(milliseconds: 200), () async {
       try {
         var places = await googlePlace.autocomplete.get(query);
         setState(() {
@@ -96,8 +96,8 @@ class _SearchPlaceState extends State<SearchPlace> {
           itemCount: _prediction.length,
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-              onTap: () {
-                _selectPlace(context, index);
+              onTap: () async {
+                await _selectPlace(context, index);
               },
               child: Container(
                 margin: EdgeInsets.only(top: kDefaultPadding, left: kDefaultPadding, right: kDefaultPadding),

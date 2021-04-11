@@ -135,7 +135,6 @@ class _BusRouteBodyState extends State<BusRouteBody> {
   LatLng myPos;
   LatLng destinationPos;
   List<CarModel> _busList = [];
-  List<LatLng> _routes = [];
   TextEditingController _controllerOrigin = new TextEditingController();
   TextEditingController _controllerDestination = new TextEditingController();
   bool isLoading = true;
@@ -310,7 +309,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                 SizedBox(height: 20,),
                 Stack(
                   children: [
-                    Expanded(
+                    Container(
                       child: SizedBox(
                         height: maxHeight / 3,
                         child: ListView(

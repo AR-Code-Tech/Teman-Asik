@@ -208,25 +208,67 @@ class _PreviewScreenState extends State<PreviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          ''
-        ),
-      ),
       body: Container(
-        child: GoogleMap(
-          onMapCreated: _onMapCreated,
-          markers: _markers,
-          polylines: _polylines,
-          initialCameraPosition: CameraPosition(
-            target: origin,
-            zoom: 15
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: GoogleMap(
+                onMapCreated: _onMapCreated,
+                markers: _markers,
+                polylines: _polylines,
+                initialCameraPosition: CameraPosition(
+                  target: origin,
+                  zoom: 15
+                ),
+                zoomControlsEnabled: true,
+                compassEnabled: true,
+                zoomGesturesEnabled: true,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+              ),
+            ),
+            SafeArea(
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: kDefaultPadding,
+                    left: 0,
+                    child: RawMaterialButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      elevation: 5.0,
+                      fillColor: kBackgroundColor,
+                      child: Icon(
+                        Icons.chevron_left,
+                        size: 24.0,
+                        color: kDarkColor,
+                      ),
+                      padding: EdgeInsets.all(5.0),
+                      shape: CircleBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        )
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SizedBox(height: 10),
+          FloatingActionButton.extended(
+            heroTag: '2',
+            onPressed: () {},
+            label: Text('Mulai Navigasi'),
+            icon: Icon(Icons.navigation),
+            backgroundColor: kPrimaryColor,
           ),
-          zoomControlsEnabled: true,
-          compassEnabled: true,
-          zoomGesturesEnabled: true,
-          myLocationEnabled: true,
-        ),
+          // SizedBox(height: 10),
+        ],
       ),
     );
   }

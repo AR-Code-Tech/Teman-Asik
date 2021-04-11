@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -55,16 +57,14 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
   }
 
   void _focusCameraMap(LatLng position, double zoom) {
-    setState(() {
-      _googleMapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-              target: LatLng(position.latitude, position.longitude),
-              zoom: zoom
-          )
+    _googleMapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(position.latitude, position.longitude),
+            zoom: zoom
         )
-      );
-    });
+      )
+    );
   }
 
   void _locatePosition() async {
@@ -85,12 +85,40 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
         builder: (context) => SearchPlace()
       )
     );
+    print(result);
     if (result != null) {
       _addDestination(result);
-      _focusCameraMap(
-        result,
-        17
-      );
+      setState(() {
+        destinationPos = result;
+      });
+
+      var t = Timer(Duration(milliseconds: 1200), () {
+        // _focusCameraMap(result, 14);
+        LatLng sourceLocation = myPos;
+        LatLng destLocation = result;
+        LatLng temp;
+        if (sourceLocation.latitude > destLocation.latitude) {
+          temp = sourceLocation;
+          sourceLocation = destLocation;
+          destLocation = temp;
+        }
+        LatLngBounds bound = LatLngBounds(southwest: sourceLocation, northeast: destLocation);
+        CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+        _googleMapController.animateCamera(u2).then((void v) {
+          check(u2, _googleMapController);
+        });
+      });
+    }
+  }
+
+  void check(CameraUpdate u, GoogleMapController c) async {
+    c.animateCamera(u);
+    _googleMapController.animateCamera(u);
+    LatLngBounds l1 = await c.getVisibleRegion();
+    LatLngBounds l2 = await c.getVisibleRegion();
+
+    if (l1.southwest.latitude == -1000 || l2.southwest.latitude == -1000) {
+      check(u, c);
     }
   }
 
@@ -99,6 +127,25 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pilih Tujuan'),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              LocationSelectData data = LocationSelectData(
+                origin: myPos,
+                destination: destinationPos
+              );
+              Navigator.pop(context, data);
+            },
+            child: InkWell(
+              splashColor: Colors.white.withOpacity(.30),
+              child: Container(
+                margin: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.all(5),
+                child: Icon(Icons.check, size: 30,),
+              ),
+            ),
+          )
+        ],
       ),
       body: SafeArea(
         child: Stack(
@@ -116,6 +163,24 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                 myLocationEnabled: true,
               ),
             ),
+            Positioned(
+              top: kDefaultPadding,
+              right: 0,
+              child: RawMaterialButton(
+                onPressed: () {
+                  _locatePosition();
+                },
+                elevation: 5.0,
+                fillColor: kBackgroundColor,
+                child: Icon(
+                  Icons.gps_fixed,
+                  size: 16.0,
+                  color: kDarkColor,
+                ),
+                padding: EdgeInsets.all(5.0),
+                shape: CircleBorder(),
+              ),
+            ),
           ],
         )
       ),
@@ -123,12 +188,12 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          FloatingActionButton.extended(
-            heroTag: '1',
-            onPressed: _locatePosition,
-            label: Text('Lokasi Saya'),
-            icon: Icon(Icons.gps_fixed)
-          ),
+          // FloatingActionButton.extended(
+          //   heroTag: '1',
+          //   onPressed: _locatePosition,
+          //   label: Text('Lokasi Saya'),
+          //   icon: Icon(Icons.gps_fixed)
+          // ),
           SizedBox(height: 10),
           FloatingActionButton.extended(
             heroTag: '2',
@@ -137,20 +202,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
             icon: Icon(Icons.search),
             backgroundColor: Colors.amber,
           ),
-          SizedBox(height: 10),
-          FloatingActionButton.extended(
-            heroTag: '3',
-            onPressed: () {
-              LocationSelectData data = LocationSelectData(
-                origin: myPos,
-                destination: destinationPos
-              );
-              Navigator.pop(context, data);
-            },
-            label: Text('Pilih'),
-            icon: Icon(Icons.check),
-            backgroundColor: Colors.green,
-          ),
+          // SizedBox(height: 10),
         ],
       ),
     );
