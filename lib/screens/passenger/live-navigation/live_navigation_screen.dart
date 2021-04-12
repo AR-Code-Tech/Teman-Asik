@@ -151,7 +151,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   }
 
   void _focusBound(LatLng sourceLocation, LatLng destLocation) async {
-    var t = Timer(Duration(milliseconds: 600), () async {
+    Timer(Duration(milliseconds: 600), () async {
       LatLng temp;
       if (sourceLocation.latitude > destLocation.latitude) {
         temp = sourceLocation;
@@ -360,8 +360,6 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
       var url = Uri.parse('$apiUrl/navigation?origin=$originUrl&destination=$destinationUrl');
       var httpResult = await http.get(url);
       var data = json.decode(httpResult.body);
-      List<CarModel> cars = [];
-      int i = 0;
       for(var item in data['transportations']) {
         if (item['id'] == navigationTransportation) {
           List<LatLng> routes = [];

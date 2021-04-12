@@ -33,12 +33,10 @@ class _BusStopBodyState extends State<BusStopBody> {
       var httpResult = await http.get(url);
       var data = json.decode(httpResult.body);
       List<BusStopModel> terminals = [];
-      int i = 0;
       for (var item in data['data']) {
         // print
         terminals.add(BusStopModel(
             item['name'], LatLng(item['latitude'], item['longitude'])));
-        i++;
       }
       setState(() {
         busStop = terminals;

@@ -18,6 +18,7 @@ class RouteModel {
   });
 }
 
+// ignore: must_be_immutable
 class PreviewScreen extends StatefulWidget {
   LatLng origin;
   LatLng destination;
@@ -80,8 +81,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
       );
       _polylines.add(p);
 
-      List<LatLng> routeToDestination = [];
-      bool continueAdd = false;
       LatLng sourceLocation = closestPointFromOrigin;
       LatLng destLocation = closestPointFromDestination;
       LatLng temp;

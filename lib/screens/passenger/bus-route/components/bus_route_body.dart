@@ -33,6 +33,7 @@ class CarModel {
   });
 }
 
+// ignore: must_be_immutable
 class CarItem extends StatelessWidget {
   final CarModel car;
   final Function onPress;
@@ -50,12 +51,6 @@ class CarItem extends StatelessWidget {
       fontFamily: kFontFamily,
       fontSize: 18,
       fontWeight: FontWeight.w600,
-      color: kDarkColor.withOpacity(0.8)
-    );
-    final carSubTitleStlye = TextStyle(
-      fontFamily: kFontFamily,
-      fontSize: 13,
-      fontWeight: FontWeight.w500,
       color: kDarkColor.withOpacity(0.8)
     );
 
@@ -210,7 +205,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
   }
 
   void _focusBound() {
-    var t = Timer(Duration(milliseconds: 1200), () {
+    Timer(Duration(milliseconds: 1200), () {
       // _focusCameraMap(result, 14);
       LatLng sourceLocation = myPos;
       LatLng destLocation = destinationPos;
@@ -329,7 +324,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                                 car: car,
                                 bestWay: (car.id == bestScoreTransportation),
                                 onPress: () async {
-                                  final result = await Navigator.push(
+                                  await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => PreviewScreen(

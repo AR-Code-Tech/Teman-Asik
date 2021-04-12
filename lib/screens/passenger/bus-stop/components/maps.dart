@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:teman_asik/constans.dart';
 
+// ignore: must_be_immutable
 class BusStopMaps extends StatelessWidget {
   GoogleMapController _googleMapController;
   final LatLng latLng;
