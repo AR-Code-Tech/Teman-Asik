@@ -273,7 +273,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         child: Stack(
           children: [
             SizedBox(
-              height: (busPredictBoxShow) ? maxHeight * 0.48 : maxHeight,
+              height: (busPredictBoxShow) ? maxHeight * 0.60 : maxHeight,
               child: Align(
                 alignment: Alignment.center,
                 child: GoogleMap(
@@ -292,7 +292,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
             (busPredictBoxShow) ? SizedBox.expand(
               child: DraggableScrollableSheet(
                 initialChildSize: .4,
-                minChildSize: .3,
+                minChildSize: .4,
                 maxChildSize: .4,
                 builder: (BuildContext c, s) {
                   return Container(
@@ -338,6 +338,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                                         closestPointFromDestination: car.closestPointFromDestination,
                                         closestPointFromOrigin: car.closestPointFromOrigin,
                                         routes: car.routes,
+                                        car: car
                                       )
                                     )
                                   );
@@ -390,6 +391,8 @@ class _BusRouteBodyState extends State<BusRouteBody> {
       var data = json.decode(httpResult.body);
       List<CarModel> cars = [];
 
+      List listColors = [Colors.blue, Colors.red, Colors.yellow, Colors.green, Colors.grey[700]];
+      int i = 0;
       for(var item in data['transportations']) {
         List<LatLng> routes = [];
         for (var route in item["routes"]) {
@@ -404,11 +407,12 @@ class _BusRouteBodyState extends State<BusRouteBody> {
           title: item['name'],
           description: item['description'],
           icon: Icons.directions_bus,
-          iconColor: Colors.blue.withOpacity(0.3),
+          iconColor: listColors[i % (listColors.length)].withOpacity(0.3),
           routes: routes,
           closestPointFromOrigin: LatLng(item['closestPointFromOrigin']['latitude'], item['closestPointFromOrigin']['longitude']),
           closestPointFromDestination: LatLng(item['closestPointFromDestination']['latitude'], item['closestPointFromDestination']['longitude']),
         ));
+        i++;
       }        
       
       setState(() {

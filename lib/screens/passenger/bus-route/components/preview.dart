@@ -1,7 +1,10 @@
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
+import 'bus_route_body.dart';
 
 class RouteModel {
   double lat;
@@ -21,6 +24,7 @@ class PreviewScreen extends StatefulWidget {
   LatLng closestPointFromDestination;
   LatLng closestPointFromOrigin;
   List<LatLng> routes;
+  CarModel car;
 
   PreviewScreen({
     Key key,
@@ -29,10 +33,18 @@ class PreviewScreen extends StatefulWidget {
     @required this.closestPointFromOrigin,
     @required this.closestPointFromDestination,
     @required this.routes,
+    @required this.car,
   }) : super(key: key);
 
   @override
-  _PreviewScreenState createState() => _PreviewScreenState(this.origin, this.destination, this.closestPointFromOrigin, this.closestPointFromDestination, this.routes);
+  _PreviewScreenState createState() => _PreviewScreenState(
+    this.origin,
+    this.destination,
+    this.closestPointFromOrigin,
+    this.closestPointFromDestination,
+    this.routes,
+    this.car
+  );
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
@@ -44,6 +56,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   LatLng destination;
   LatLng closestPointFromOrigin;
   LatLng closestPointFromDestination;
+  CarModel car;
   
   _PreviewScreenState(
     this.origin,
@@ -51,6 +64,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
     this.closestPointFromOrigin,
     this.closestPointFromDestination,
     this.routes,
+    this.car,
   );
 
   @override
@@ -143,16 +157,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
           markerId: MarkerId('origin'),
           position: origin,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure)
-        )
-      );
-      _markers.add(
-        Marker(
-          markerId: MarkerId('closestPointFromOrigin'),
-          position: closestPointFromOrigin,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-          infoWindow: InfoWindow(
-            title: "Titik Naik"
-          ),
         )
       );
       _markers.add(
@@ -261,8 +265,25 @@ class _PreviewScreenState extends State<PreviewScreen> {
         children: [
           SizedBox(height: 10),
           FloatingActionButton.extended(
-            heroTag: '2',
-            onPressed: () {},
+            heroTag: '1',
+            onPressed: () async {
+              if (await confirm(
+                context,
+                title: Text('Konfirmasi'),
+                content: Text('Apakah kamu yakin ingin memulai navigasi?'),
+                textOK: Text('Ya'),
+                textCancel: Text('Tidak'),
+              )) {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('navigation', true);
+                await prefs.setInt('navigation_step', 1);
+                await prefs.setInt('navigation_transportation', car.id);
+                await prefs.setDouble('navigation_destination_latitude', destination.latitude);
+                await prefs.setDouble('navigation_destination_longitude', destination.longitude);
+                Navigator.pop(context);
+                return Navigator.pushReplacementNamed(context, '/passenger/live-navigation');
+              }
+            },
             label: Text('Mulai Navigasi'),
             icon: Icon(Icons.navigation),
             backgroundColor: kPrimaryColor,

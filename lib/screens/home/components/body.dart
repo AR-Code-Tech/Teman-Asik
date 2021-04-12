@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBody extends StatefulWidget {
   @override
@@ -8,8 +9,29 @@ class HomeBody extends StatefulWidget {
 
 //  'assets/images/illustrations/walking-with-handbag.png'
 class _HomeBodyState extends State<HomeBody> {
+  BuildContext context;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkNavigation();
+  }
+
+  void _checkNavigation() async {
+    while (context == null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool isNavigation = (prefs.getBool('navigation') ?? false);
+      if (isNavigation) {
+        await Navigator.pushReplacementNamed(context, '/passenger/live-navigation');
+      }
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      this.context = context;
+    });
     return SafeArea(
       child: Container(
         padding: EdgeInsets.all(kDefaultPadding),
