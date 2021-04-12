@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:location/location.dart';
+import 'package:wakelock/wakelock.dart';
 import '../bus-route/components/bus_route_body.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
@@ -34,7 +35,14 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   @override
   void initState() {
     super.initState();
+    Wakelock.enable();
     init();
+  }
+
+  @override
+  void dispose() {
+    Wakelock.disable();
+    super.dispose();
   }
 
   void init() async {

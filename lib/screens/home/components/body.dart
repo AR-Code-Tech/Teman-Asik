@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBody extends StatefulWidget {
@@ -10,28 +12,61 @@ class HomeBody extends StatefulWidget {
 //  'assets/images/illustrations/walking-with-handbag.png'
 class _HomeBodyState extends State<HomeBody> {
   BuildContext context;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _checkNavigation();
+    _checkState();
   }
 
-  void _checkNavigation() async {
-    while (context == null) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool isNavigation = (prefs.getBool('navigation') ?? false);
-      if (isNavigation) {
-        await Navigator.pushReplacementNamed(context, '/passenger/live-navigation');
+  void _checkState() async {
+    setState(() {
+      isLoading = true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = (prefs.getString('auth_token') ?? '');
+    bool isNavigation = (prefs.getBool('navigation') ?? false);
+    try {
+      if (token != '') {
+        var url = Uri.parse('$apiUrl/auth/profile');
+        var httpResult = await http.post(
+          url,
+          headers: <String, String>{
+            'Accept': 'application/json;',
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token',
+          }
+        );
+        if (httpResult.statusCode == 200) {
+          Navigator.pushReplacementNamed(context, '/driver/Home');
+        }
       }
+    } catch (e) {
     }
+    if (isNavigation) Navigator.pushReplacementNamed(context, '/passenger/live-navigation');
+    while (context == null) {
+      if (isNavigation) Navigator.pushReplacementNamed(context, '/passenger/live-navigation');
+    }
+    setState(() => isLoading = false);
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      this.context = context;
-    });
+    setState(() => this.context = context);
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: Container(
+          color: kBackgroundColor,
+          child: Center(
+            child: Text(
+              'Loading...'
+            ),
+          ),
+        )
+      );
+    }
     return SafeArea(
       child: Container(
         padding: EdgeInsets.all(kDefaultPadding),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:teman_asik/screens/driver/passengerMaps/passenger_maps_screen.dart';
 
@@ -25,12 +26,15 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
     Container(),
   ];
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
     });
-    if (index == _widgetOptions.length - 1)
+    if (index == _widgetOptions.length - 1) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('auth_token', '');
       Navigator.pushReplacementNamed(this.context, '/');
+    }
   }
 
   @override

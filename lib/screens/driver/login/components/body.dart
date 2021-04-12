@@ -103,7 +103,12 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
           Expanded(
             flex: 1,
             child: Center(
-              child: Text("LOGO APPS", style: kTitleStyle),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/');
+                },
+                child: Text("LOGO APPS", style: kTitleStyle),
+              ),
             ),
           ),
           Expanded(
