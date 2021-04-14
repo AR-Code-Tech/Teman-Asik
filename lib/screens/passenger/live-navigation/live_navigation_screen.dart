@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
-import 'package:location/location.dart';
 import 'package:wakelock/wakelock.dart';
 import '../bus-route/components/bus_route_body.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';

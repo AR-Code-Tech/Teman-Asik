@@ -17,8 +17,8 @@ import 'package:flutter/material.dart';
 
 // light theme + blue as primary color
 const String kAppTitle = "Teman Asik";
-// const String apiUrl = "http://192.168.1.8:8000/api";
-const String apiUrl = "http://180.250.159.51:7777/api";
+const String apiUrl = "http://192.168.1.7:8000/api";
+// const String apiUrl = "http://180.250.159.51:7777/api";
 // const String kGoogleApiKey = "AIzaSyDiCInoDZEAuZeLRme9jZphpsN4KsHWenQ";
 const String kGoogleApiKey = "AIzaSyAVWlVZr4QEOUmwOmVSSGUIJR3gHjwg0Zs";
 

@@ -56,7 +56,7 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
       } else if (httpResult.statusCode == 401) {
         _showAlert('Username atau Password salah.');
       } else if (httpResult.statusCode == 200) {
-        if (body['user']['role'] != 'Driver') {
+        if (body['user']['role_type'] != 'Driver') {
           return _showAlert('Akun anda bukan seorang Driver.');
         }
         SharedPreferences prefs = await SharedPreferences.getInstance();
