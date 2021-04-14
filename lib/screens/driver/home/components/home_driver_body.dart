@@ -68,7 +68,7 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
 
       socket = IO.io('$socketUrl', <String, dynamic>{
         'transports': ['websocket'],
-        'autoConnect': false,
+        'autoConnect': true,
       });
       socket.onConnect((_) {
         Object info = { 'user_id': data['id'], 'transportation_id': data['role']['transportation']['id'] };
@@ -94,18 +94,12 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
 
     // location
     _location = new Location();
-    while (isSocketConnected != true) {
-      await geo.Geolocator.getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.high).then((geo.Position position) {
-        setState(() {
-          myPos = LatLng(position.latitude, position.longitude);
-          onLocationChange(position.latitude, position.longitude);
-        });
-      });
-    }
+    LocationData locdat = await _location.getLocation();
+    setState(() => myPos = LatLng(locdat.latitude, locdat.longitude));
+    onLocationChange(locdat.latitude, locdat.longitude);
     _location.onLocationChanged().listen((LocationData locationdata) async {
       setState(() => myPos = LatLng(locationdata.latitude, locationdata.longitude));
       onLocationChange(locationdata.latitude, locationdata.longitude);
-      print('update');
     });
   }
 
