@@ -21,21 +21,19 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
     final snackBar = SnackBar(content: Text(text));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-  
+
   void _login() async {
     try {
       var url = Uri.parse('$apiUrl/auth/login');
-      var httpResult = await http.post(
-        url,
-        headers: <String, String>{
-          'Accept': 'application/json;',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'username': _usernameController.text,
-          'password': _passwordController.text
-        })
-      );
+      var httpResult = await http.post(url,
+          headers: <String, String>{
+            'Accept': 'application/json;',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'username': _usernameController.text,
+            'password': _passwordController.text
+          }));
       var body = json.decode(httpResult.body);
       if (httpResult.statusCode == 422) {
         if (body['message'] != null) {
@@ -70,30 +68,36 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
     }
   }
 
-  Widget _buildTextFormField(String text, IconData icon, TextEditingController controller) => TextFormField(
-    controller: controller,
-    decoration: InputDecoration(
-      labelText: text,
-      prefixIcon: Icon(
-        icon,
-        color: Colors.black45,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(28.0),
-        borderSide: BorderSide(
-          color: Colors.green,
+  Widget _buildTextFormField(
+    String text,
+    IconData icon,
+    TextEditingController controller,
+    bool isObsecure,
+  ) =>
+      TextFormField(
+        controller: controller,
+        obscureText: isObsecure,
+        decoration: InputDecoration(
+          labelText: text,
+          prefixIcon: Icon(
+            icon,
+            color: Colors.black45,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(28.0),
+            borderSide: BorderSide(
+              color: Colors.green,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(28.0),
+            borderSide: BorderSide(
+              color: Colors.green,
+            ),
+          ),
+          hintText: text,
         ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(28.0),
-        borderSide: BorderSide(
-          color: Colors.green,
-        ),
-      ),
-      hintText: text,
-    ),
-  );
-
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +117,7 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
           ),
           Expanded(
             flex: 2,
-            child: Column(
+            child: ListView(
               children: [
                 Column(
                   children: [
@@ -126,7 +130,8 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
                   child: _buildTextFormField(
                     "Username",
                     Icons.account_circle,
-                    _usernameController
+                    _usernameController,
+                    false,
                   ),
                 ),
                 Padding(
@@ -134,7 +139,8 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
                   child: _buildTextFormField(
                     "Password",
                     Icons.lock_open_rounded,
-                    _passwordController
+                    _passwordController,
+                    true,
                   ),
                 ),
                 Container(
@@ -151,7 +157,7 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
           ),
           Expanded(
             flex: 1,
-            child: Column(
+            child: ListView(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -168,7 +174,7 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
                   padding: EdgeInsets.all(15),
                   decoration: BoxDecoration(
                     color: Colors.black,
-                    borderRadius: BorderRadius.circular(100),
+                    shape: BoxShape.circle,
                   ),
                   child: Image.asset(
                     'assets/images/logo/dishub.png',

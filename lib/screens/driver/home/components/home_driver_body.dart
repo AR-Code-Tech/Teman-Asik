@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:teman_asik/screens/driver/passengerMaps/passenger_maps_screen.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:geolocator/geolocator.dart' as geo;
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
