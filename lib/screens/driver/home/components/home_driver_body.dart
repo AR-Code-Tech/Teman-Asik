@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
+import 'package:teman_asik/screens/driver/home/profile/profile_driver.dart';
 import 'package:teman_asik/screens/driver/passengerMaps/passenger_maps_screen.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:location/location.dart';
@@ -25,10 +26,7 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     PassengerMapsScreen(),
-    Text(
-      'Faq 2',
-      style: optionStyle,
-    ),
+    ProfileDriver(),
     Text(
       'Faq 3',
       style: optionStyle,
