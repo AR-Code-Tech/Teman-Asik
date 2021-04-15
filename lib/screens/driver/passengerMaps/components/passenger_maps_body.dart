@@ -56,13 +56,16 @@ class _PassengerMapBodyState extends State<PassengerMapBody> {
   }
 
   void updateMarker() {
+    setState(() {
+      _markers.clear();
+    });
     for(Driver driver in Drivers.data) {
-      setState(() {
-        _markers.add(Marker(
-          markerId: MarkerId('driver-${driver.userId}'),
-          position: driver.position
-        ));
-      });
+      // setState(() {
+      //   _markers.add(Marker(
+      //     markerId: MarkerId('driver-${driver.userId}'),
+      //     position: driver.position
+      //   ));
+      // });
     }
   }
   
