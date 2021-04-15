@@ -16,14 +16,11 @@ class BusStopBody extends StatefulWidget {
 
 class _BusStopBodyState extends State<BusStopBody> {
   List<BusStopModel> busStop = [];
-  List<BusStopModel> busStopSave = [];
   List<BusStopModel> busStopSearch = [];
 
   TextEditingController searchController = new TextEditingController();
   String filter;
   bool isLoading = true;
-  bool isExist = false;
-  int index = 0;
 
   @override
   void initState() {
@@ -48,7 +45,6 @@ class _BusStopBodyState extends State<BusStopBody> {
       }
       setState(() {
         busStop = terminals;
-        busStopSave = terminals;
       });
 
       Timer(Duration(seconds: 1), () {
@@ -194,30 +190,19 @@ class _BusStopBodyState extends State<BusStopBody> {
                   leading: new Icon(Icons.search),
                   title: new TextField(
                     controller: searchController,
-                    onSubmitted: (String query) {
+                    onChanged: (String query) {
                       busStopSearch.clear();
-                      index = 0;
                       String check = searchController.text.toLowerCase();
                       for (var i = 0; i < busStop.length; i++) {
                         String busStopArray =
                             busStop[i].busStopName.toLowerCase();
-                        if (busStopArray
-                            .contains(check)) {
-                          busStopSearch.add(busStop[i]);
-                          isExist = true;
-                          index++;
+                        if (busStopArray.contains(check)) {
+                          setState(() {
+                            busStopSearch.add(busStop[i]);
+                          });
                         }
                       }
-                      if (index == 0) {
-                        isExist = false;
-                      }
-                      print(index);
-                      print(busStop.length);
-                      setState(() {
-                        (isExist)
-                            ? busStop = busStopSearch
-                            : busStop = busStopSave;
-                      });
+                      print(searchController.text);
                     },
                     decoration: new InputDecoration(
                       hintText: 'Search',
@@ -228,9 +213,6 @@ class _BusStopBodyState extends State<BusStopBody> {
                     icon: new Icon(Icons.cancel),
                     onPressed: () {
                       searchController.clear();
-                      setState(() {
-                        busStop = busStopSave;
-                      });
                     },
                   ),
                 ),
@@ -239,7 +221,9 @@ class _BusStopBodyState extends State<BusStopBody> {
           ),
           Expanded(
             flex: 2,
-            child: _createListBuilder(busStop),
+            child: (searchController.text != "")
+                ? _createListBuilder(busStopSearch)
+                : _createListBuilder(busStop),
           ),
         ],
       ),

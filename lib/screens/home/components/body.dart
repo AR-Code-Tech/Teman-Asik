@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,6 +41,13 @@ class _HomeBodyState extends State<HomeBody> {
           }
         );
         if (httpResult.statusCode == 200) {
+          var data  = jsonDecode(httpResult.body);
+          AuthDriver.id = data["id"];
+          AuthDriver.identityNumber = data["role"]["identity_number"];
+          AuthDriver.plateNumber = data["role"]["plate_number"];
+          AuthDriver.name = data["name"];
+          AuthDriver.transportationId = data["role"]["transportation_id"];
+          AuthDriver.transportationName = data["role"]["transportation"]["name"];
           Navigator.pushReplacementNamed(context, '/driver/Home');
         }
       }

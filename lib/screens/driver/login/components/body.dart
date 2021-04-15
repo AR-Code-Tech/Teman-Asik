@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,6 +58,12 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
         if (body['user']['role_type'] != 'Driver') {
           return _showAlert('Akun anda bukan seorang Driver.');
         }
+        AuthDriver.id = body["user"]["id"];
+        AuthDriver.identityNumber = body["user"]["role"]["identity_number"];
+        AuthDriver.plateNumber = body["user"]["role"]["plate_number"];
+        AuthDriver.name = body["user"]["name"];
+        AuthDriver.transportationId = body["user"]["role"]["transportation_id"];
+        AuthDriver.transportationName = body["user"]["role"]["transportation"]["name"];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', body['access_token']);
         Navigator.pushReplacementNamed(context, '/driver/Home');

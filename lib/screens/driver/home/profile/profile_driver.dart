@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
@@ -49,10 +50,10 @@ class ProfileDriver extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _createText("Nama", "Driver"),
-              _createText("No KTP", "123321"),
-              _createText("Plat Nomor", "B 0912 BH"),
-              _createText("Jenis Angkot", "LYN A"),
+              _createText("Nama", AuthDriver.name),
+              _createText("No KTP", AuthDriver.identityNumber),
+              _createText("Plat Nomor", AuthDriver.plateNumber),
+              _createText("Jenis Angkot", AuthDriver.transportationName),
             ],
           ),
         ),
