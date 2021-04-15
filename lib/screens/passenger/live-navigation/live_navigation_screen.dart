@@ -12,7 +12,24 @@ import '../bus-route/components/bus_route_body.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math' show cos, sqrt, asin;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+
+class Driver {
+  int userId;
+  int transportationId;
+  LatLng position;
+
+  Driver({
+    @required this.userId,
+    @required this.transportationId,
+    @required this.position,
+  });
+}
+
+class Drivers {
+  static List<Driver> data = [];
+}
 
 class LiveNavigationScreen extends StatefulWidget {
   @override
@@ -20,6 +37,7 @@ class LiveNavigationScreen extends StatefulWidget {
 }
 
 class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
+  IO.Socket socket;
   GoogleMapController _googleMapController;
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
@@ -31,6 +49,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   int navigationTransportation;
   bool isLoading = false;
   String navigationText = '';
+  Timer timerUpdateDriverMarker;
   
   @override
   void initState() {
@@ -42,7 +61,27 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   @override
   void dispose() {
     Wakelock.disable();
+    timerUpdateDriverMarker.cancel();
+    socket.disconnect();
+    socket.close();
+    socket.dispose();
     super.dispose();
+  }
+
+  void updateDriverMarker() {
+    setState(() {
+      _markers.clear();
+    });
+    for(Driver driver in Drivers.data) {
+      setState(() {
+        _markers.add(Marker(
+          markerId: MarkerId('driver-${driver.userId}'),
+          position: driver.position,
+          infoWindow: InfoWindow(title: 'Driver - ${driver.transportationId}'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        ));
+      });
+    }
   }
 
   void init() async {
@@ -73,6 +112,42 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
 
     // 
     await onLocationChange();
+
+    // init driver live location
+    initSocket();
+    timerUpdateDriverMarker = Timer.periodic(Duration(seconds: 1), (timer) {
+      updateDriverMarker();
+    });
+  }
+
+  void initSocket() {
+    socket = IO.io('$socketUrl', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+    socket.onConnect((_) {
+      print('Passenger Socket : connected to server');
+    });
+    socket.on('drivers', (data) {
+      print(data);
+      Drivers.data.clear();
+      for(var item in data) {
+        try {
+          Drivers.data.add(Driver(
+            userId: item['user_id'],
+            transportationId: item['transportation_id'],
+            position: LatLng(item['location']['latitude'], item['location']['longitude']),
+          ));
+        } catch (e) {
+        }
+      }
+      // print('Driver Count : ${Drivers.data.length}');
+    });
+    socket.onDisconnect((_) => print('disconnected'));
+    socket.onConnectError((data) => print(data));
+    socket.onConnectTimeout((data) => print(data));
+    socket.onError((data) => print(data));
+    socket.connect();
   }
 
   void _onMapCreated(GoogleMapController controller) async {

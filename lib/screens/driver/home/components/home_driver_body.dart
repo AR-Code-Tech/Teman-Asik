@@ -10,6 +10,22 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
+class Driver {
+  int userId;
+  int transportationId;
+  LatLng position;
+
+  Driver({
+    @required this.userId,
+    @required this.transportationId,
+    @required this.position,
+  });
+}
+
+class Drivers {
+  static List<Driver> data = [];
+}
+
 class HomeDriverBody extends StatefulWidget {
   @override
   _HomeDriverBodyState createState() => _HomeDriverBodyState();
@@ -69,11 +85,25 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
       });
       socket.onConnect((_) {
         Object info = { 'user_id': data['id'], 'transportation_id': data['role']['transportation']['id'] };
-        print('connected to server');
+        print('Driver Socket : connected to server');
         socket.emit('imadriver', info);
         setState(() {
           isSocketConnected = true;
         });
+      });
+      socket.on('drivers', (data) {
+        Drivers.data.clear();
+        for(var item in data) {
+          try {
+            Drivers.data.add(Driver(
+              userId: item['user_id'],
+              transportationId: item['transportation_id'],
+              position: LatLng(item['location']['latitude'], item['location']['longitude']),
+            ));
+          } catch (e) {
+          }
+        }
+        print(Drivers.data.length);
       });
       socket.onDisconnect((_) => print('disconnected'));
       socket.onConnectError((data) => print(data));
@@ -103,13 +133,14 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
   Future<void> onLocationChange(double latitude, double longitude) async {
     Object data = { 'latitude': latitude, 'longitude': longitude };
     socket.emit('driver:update', data);
-    print(data);
   }
 
   @override
   void dispose() {
-    super.dispose();
     socket.disconnect();
+    socket.close();
+    socket.dispose();
+    super.dispose();
   }
 
   @override
