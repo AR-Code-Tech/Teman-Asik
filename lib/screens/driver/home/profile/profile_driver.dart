@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:teman_asik/constans.dart';
-
+import 'dart:ui';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 class ProfileDriver extends StatelessWidget {
   Widget _createText(String title, String data) {
     return Column(
@@ -17,7 +19,6 @@ class ProfileDriver extends StatelessWidget {
       ],
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Column(

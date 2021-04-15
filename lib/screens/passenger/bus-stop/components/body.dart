@@ -16,10 +16,14 @@ class BusStopBody extends StatefulWidget {
 
 class _BusStopBodyState extends State<BusStopBody> {
   List<BusStopModel> busStop = [];
+  List<BusStopModel> busStopSave = [];
+  List<BusStopModel> busStopSearch = [];
 
   TextEditingController searchController = new TextEditingController();
   String filter;
   bool isLoading = true;
+  bool isExist = false;
+  int index = 0;
 
   @override
   void initState() {
@@ -35,11 +39,16 @@ class _BusStopBodyState extends State<BusStopBody> {
       List<BusStopModel> terminals = [];
       for (var item in data['data']) {
         // print
-        terminals.add(BusStopModel(
-            item['name'], LatLng(item['latitude'], item['longitude'])));
+        terminals.add(
+          BusStopModel(
+            item['name'],
+            LatLng(item['latitude'], item['longitude']),
+          ),
+        );
       }
       setState(() {
         busStop = terminals;
+        busStopSave = terminals;
       });
 
       Timer(Duration(seconds: 1), () {
@@ -50,10 +59,76 @@ class _BusStopBodyState extends State<BusStopBody> {
     } catch (e) {}
   }
 
+  Widget _createListBuilder(List<BusStopModel> model) {
+    return ListView.builder(
+      itemCount: model.length,
+      itemBuilder: (BuildContext context, int index) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BusStopMaps(
+                  busStopName: model[index].busStopName,
+                  latLng: model[index].latlng,
+                ),
+              ),
+            );
+          },
+          child: Container(
+            height: 50,
+            margin: EdgeInsets.fromLTRB(kDefaultPadding, 5, kDefaultPadding, 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    child: Icon(
+                      Icons.place,
+                      color: Colors.red,
+                      size: 18,
+                    ),
+                  ),
+                ),
+                Expanded(
+                    flex: 4,
+                    child: Text(
+                      '${model[index].busStopName}',
+                      style:
+                          TextStyle(fontFamily: kFontFamily, color: kDarkColor),
+                    )),
+                Expanded(
+                  child: Container(),
+                  flex: 1,
+                ),
+                Expanded(
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: kDarkColor,
+                    size: 15,
+                  ),
+                  flex: 1,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> loadingShimmer = [];
-    int shimmerCount = ((MediaQuery.of(context).size.height -((kDefaultPadding * 2) + 2.0 + (kDefaultPadding * 3))) /50).floor() -5;
+    int shimmerCount = ((MediaQuery.of(context).size.height -
+                    ((kDefaultPadding * 2) + 2.0 + (kDefaultPadding * 3))) /
+                50)
+            .floor() -
+        5;
     for (int i = 0; i < shimmerCount; i++) {
       loadingShimmer.add(Shimmer.fromColors(
         baseColor: Colors.grey[300],
@@ -74,14 +149,14 @@ class _BusStopBodyState extends State<BusStopBody> {
       return SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            top: kDefaultPadding,
-            left: kDefaultPadding,
-            right: kDefaultPadding
-          ),
+              top: kDefaultPadding,
+              left: kDefaultPadding,
+              right: kDefaultPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Daftar Halte', style: kTitleStyle, textAlign: TextAlign.left),
+              Text('Daftar Halte',
+                  style: kTitleStyle, textAlign: TextAlign.left),
               SizedBox(
                 height: 20,
               ),
@@ -119,6 +194,31 @@ class _BusStopBodyState extends State<BusStopBody> {
                   leading: new Icon(Icons.search),
                   title: new TextField(
                     controller: searchController,
+                    onSubmitted: (String query) {
+                      busStopSearch.clear();
+                      index = 0;
+                      String check = searchController.text.toLowerCase();
+                      for (var i = 0; i < busStop.length; i++) {
+                        String busStopArray =
+                            busStop[i].busStopName.toLowerCase();
+                        if (busStopArray
+                            .contains(check)) {
+                          busStopSearch.add(busStop[i]);
+                          isExist = true;
+                          index++;
+                        }
+                      }
+                      if (index == 0) {
+                        isExist = false;
+                      }
+                      print(index);
+                      print(busStop.length);
+                      setState(() {
+                        (isExist)
+                            ? busStop = busStopSearch
+                            : busStop = busStopSave;
+                      });
+                    },
                     decoration: new InputDecoration(
                       hintText: 'Search',
                       border: InputBorder.none,
@@ -128,6 +228,9 @@ class _BusStopBodyState extends State<BusStopBody> {
                     icon: new Icon(Icons.cancel),
                     onPressed: () {
                       searchController.clear();
+                      setState(() {
+                        busStop = busStopSave;
+                      });
                     },
                   ),
                 ),
@@ -136,66 +239,7 @@ class _BusStopBodyState extends State<BusStopBody> {
           ),
           Expanded(
             flex: 2,
-            child: ListView.builder(
-              itemCount: busStop.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BusStopMaps(
-                          busStopName: busStop[index].busStopName,
-                          latLng: busStop[index].latlng,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    margin: EdgeInsets.fromLTRB(
-                        kDefaultPadding, 5, kDefaultPadding, 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            child: Icon(
-                              Icons.place,
-                              color: Colors.red,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                            flex: 4,
-                            child: Text(
-                              '${busStop[index].busStopName}',
-                              style: TextStyle(
-                                  fontFamily: kFontFamily, color: kDarkColor),
-                            )),
-                        Expanded(
-                          child: Container(),
-                          flex: 1,
-                        ),
-                        Expanded(
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: kDarkColor,
-                            size: 15,
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+            child: _createListBuilder(busStop),
           ),
         ],
       ),
