@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 // import 'package:location/location.dart';
@@ -52,6 +53,17 @@ class _PassengerMapBodyState extends State<PassengerMapBody> {
     init();
     a = Timer.periodic(Duration(seconds: 1), (timer) {
       updateMarker();
+      updatePassenger();
+    });
+  }
+
+  void updatePassenger() {
+    int i = 0;
+    for(Passenger p in Drivers.passengers) {
+      if (p.transportationId == AuthDriver.transportationId) i++;
+    }
+    setState(() {
+      passengerPrediction = i;
     });
   }
 

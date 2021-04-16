@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as GEO;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:teman_asik/screens/driver/home/profile/profile_driver.dart';
 import 'package:teman_asik/screens/driver/passengerMaps/passenger_maps_screen.dart';
@@ -22,8 +24,17 @@ class Driver {
   });
 }
 
+class Passenger {
+  int transportationId;
+
+  Passenger({
+    @required this.transportationId,
+  });
+}
+
 class Drivers {
   static List<Driver> data = [];
+  static List<Passenger> passengers = [];
 }
 
 class HomeDriverBody extends StatefulWidget {
@@ -103,7 +114,19 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
           } catch (e) {
           }
         }
-        print(Drivers.data.length);
+        // print('Driver Count : ${Drivers.data.length}');
+      });
+      socket.on('passengers', (data) {
+        Drivers.passengers.clear();
+        for(var item in data) {
+          try {
+            Drivers.passengers.add(Passenger(
+              transportationId: item['transportation_id'],
+            ));
+          } catch (e) {
+          }
+        }
+        // print('Passenger Count : ${Drivers.passengers.length}');
       });
       socket.onDisconnect((_) => print('disconnected'));
       socket.onConnectError((data) => print(data));
@@ -115,15 +138,22 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
     }
   }
 
+  Future<void> _locatePosition() async {
+    return await GEO.Geolocator.getCurrentPosition(desiredAccuracy: GEO.LocationAccuracy.high)
+        .then((GEO.Position position) {
+      setState(() => myPos = LatLng(position.latitude, position.longitude));
+      onLocationChange(position.latitude, position.longitude);
+      print(myPos);
+    });
+  }
+
   void init() async {
     // 
     await initSocket();
 
     // location
+    await _locatePosition();
     _location = new Location();
-    LocationData locdat = await _location.getLocation();
-    setState(() => myPos = LatLng(locdat.latitude, locdat.longitude));
-    onLocationChange(locdat.latitude, locdat.longitude);
     _location.onLocationChanged().listen((LocationData locationdata) async {
       setState(() => myPos = LatLng(locationdata.latitude, locationdata.longitude));
       onLocationChange(locationdata.latitude, locationdata.longitude);

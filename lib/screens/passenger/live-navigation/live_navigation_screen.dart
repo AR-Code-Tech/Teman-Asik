@@ -51,6 +51,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   String navigationText = '';
   Timer timerUpdateDriverMarker;
   bool isFinished = false;
+  List<Driver> oldDriver = [];
   
   @override
   void initState() {
@@ -70,22 +71,51 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   }
 
   void updateDriverMarker() {
-    for(Marker marker in _markers) {
-      if (marker.markerId.value.toString().toLowerCase().contains('driver-')) {
+    // for(Marker marker in _markers) {
+    //   if (marker.markerId.value.toString().toLowerCase().contains('driver-')) {
+    //     setState(() {
+    //       _markers.removeWhere((Marker e) => e.markerId.value == marker.markerId.value);
+    //     });
+    //   }
+    // }
+    // 
+    // old = 2
+    // new = 1
+    // 
+    try {
+      List<Driver> tmpDriver = [];
+      for(Driver driver in Drivers.data) {
         setState(() {
-          _markers.removeWhere((Marker e) => e.markerId.value == marker.markerId.value);
+          for(Driver e in oldDriver) {
+            try {
+              oldDriver.removeWhere((Driver a) => a.userId == e.userId);
+            } catch (e) {
+            }
+          }
+          tmpDriver.add(driver);
+          _markers.add(Marker(
+            markerId: MarkerId('driver-${driver.userId}'),
+            position: driver.position,
+            infoWindow: InfoWindow(title: 'Driver - ${driver.transportationId}'),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          ));
         });
       }
-    }
-    for(Driver driver in Drivers.data) {
-      setState(() {
-        _markers.add(Marker(
-          markerId: MarkerId('driver-${driver.userId}'),
-          position: driver.position,
-          infoWindow: InfoWindow(title: 'Driver - ${driver.transportationId}'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-        ));
-      });
+      if (oldDriver.length > 0 || tmpDriver.length == 0) {
+        setState(() {
+          for(Marker marker in _markers) {
+            if (marker.markerId.value.toString().toLowerCase().contains('driver-')) {
+              _markers.removeWhere((Marker e) => e.markerId.value == marker.markerId.value);
+            }
+          }
+          oldDriver.clear();
+          for(Driver driver in tmpDriver) {
+            oldDriver.add(driver);
+          }
+        });
+      }
+      print('Tmp : ${tmpDriver.length}  Olddriver : ${oldDriver.length}  Drivers : ${Drivers.data.length}');
+    } catch (e) {
     }
   }
 
@@ -131,7 +161,9 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
       'autoConnect': true,
     });
     socket.onConnect((_) {
+      Object info = { 'transportation_id': navigationTransportation };
       print('Passenger Socket : connected to server');
+      socket.emit('imapassenger', info);
     });
     socket.on('drivers', (data) {
       print(data);
