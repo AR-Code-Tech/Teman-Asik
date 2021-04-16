@@ -415,6 +415,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         _busList = cars;
       });
     } catch (e) {
+      print(e);
     }
     setState(() => busPredictBoxIsLoading = false);
   }

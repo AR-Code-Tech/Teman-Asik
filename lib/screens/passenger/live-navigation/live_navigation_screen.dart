@@ -50,6 +50,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   bool isLoading = false;
   String navigationText = '';
   Timer timerUpdateDriverMarker;
+  bool isFinished = false;
   
   @override
   void initState() {
@@ -69,9 +70,13 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   }
 
   void updateDriverMarker() {
-    setState(() {
-      _markers.clear();
-    });
+    for(Marker marker in _markers) {
+      if (marker.markerId.value.toString().toLowerCase().contains('driver-')) {
+        setState(() {
+          _markers.removeWhere((Marker e) => e.markerId.value == marker.markerId.value);
+        });
+      }
+    }
     for(Driver driver in Drivers.data) {
       setState(() {
         _markers.add(Marker(
@@ -170,10 +175,20 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
 
     // -7,151691, 112,65191
     var a = calculateDistance(origin.latitude, origin.longitude, car.closestPointFromOrigin.latitude, car.closestPointFromOrigin.longitude);
-    if (a <= 0.0035) {
-      if (navigationStep == 1) {
-        setState(() => navigationStep++);
-      }
+    if (a <= 0.0035 && navigationStep == 1) {
+      setState(() => navigationStep++);
+    }
+
+    // 
+    var b = calculateDistance(origin.latitude, origin.longitude, car.closestPointFromDestination.latitude, car.closestPointFromDestination.longitude);
+    if (b <= 0.0105 && navigationStep == 2) {
+      setState(() => navigationStep++);
+    }
+
+    // 
+    var c = calculateDistance(origin.latitude, origin.longitude, destination.latitude, destination.longitude);
+    if (c <= 0.0055 && navigationStep == 3) {
+      _finishNavigation();
     }
 
     if (navigationStep == 1) {
@@ -185,7 +200,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
       });
       _focusBound(origin, car.closestPointFromOrigin);
     } else if (navigationStep == 2) {
-      navigationText = 'Silahkan menunggu angkutan di area sekitar anda sekarang.';
+      navigationText = 'Silahkan menunggu angkutan di area sekitar anda sekarang. Dan naiklah dan tunggu sampai anda dekat dengan titik turun.';
       var p = Polyline(
         polylineId: PolylineId('rute'),
         visible: true,
@@ -297,6 +312,18 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
     });
   }
 
+  void _exitNavigation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('navigation', false);
+    Navigator.pushReplacementNamed(context, '/passenger/home');
+  }
+
+  void _finishNavigation() {
+    setState(() {
+      isFinished = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width;
@@ -313,6 +340,65 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
         )
       );
     }
+    if (isFinished) {
+      return Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: SafeArea(
+          child: Container(
+            color: kBackgroundColor,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(25),
+                        decoration: BoxDecoration(
+                          color: kPrimaryColor,
+                          borderRadius: BorderRadius.circular(99)
+                        ),
+                        child: Icon(
+                          Icons.check,
+                          size: 120,
+                          color: kLightColor,
+                        ),
+                      ),
+                      SizedBox(height: 30,),
+                      Text(
+                        'Navigasi Selesai',
+                        style: kTitleStyle,
+                      ),
+                      SizedBox(height: 15,),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.white),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                          )
+                        ),
+                        onPressed: _exitNavigation, 
+                        child: Row(
+                          children: [
+                            SizedBox(width: 10,),
+                            Text('OK', style: TextStyle(color: kDarkColor),),
+                            SizedBox(width: 5,),
+                            Icon(Icons.chevron_right, color: kDarkColor,)
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            ),
+          ),
+        )
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kBackgroundColor,
@@ -320,11 +406,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
         leading: Padding(
           padding: EdgeInsets.only(right: 20.0),
           child: GestureDetector(
-            onTap: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('navigation', false);
-              Navigator.pushReplacementNamed(context, '/passenger/home');
-            },
+            onTap: _exitNavigation,
             child: Icon(
               Icons.close,
               size: 26.0,
@@ -392,6 +474,26 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
                       child: Row(
                         children: [
                           Icon(Icons.chevron_right)
+                        ],
+                      ),
+                    ),
+                  ) : Container(),
+                  (navigationStep == 3) ? Positioned(
+                    bottom: kDefaultPadding /2,
+                    right: kDefaultPadding,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.green),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        )
+                      ),
+                      onPressed: _finishNavigation,
+                      child: Row(
+                        children: [
+                          Icon(Icons.check),
+                          SizedBox(width: 8,),
+                          Text('Selesai')
                         ],
                       ),
                     ),

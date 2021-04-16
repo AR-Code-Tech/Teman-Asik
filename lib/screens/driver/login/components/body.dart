@@ -91,15 +91,15 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
             color: Colors.black45,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(28.0),
+            borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
-              color: Colors.green,
+              color: Colors.blue,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(28.0),
+            borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
-              color: Colors.green,
+              color: Colors.blue,
             ),
           ),
           hintText: text,
@@ -118,7 +118,14 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/');
                 },
-                child: Text("LOGO APPS", style: kTitleStyle),
+                child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Image.asset('assets/images/logo/app.png', height: 102),
+                  ),
               ),
             ),
           ),
@@ -126,6 +133,7 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
             flex: 2,
             child: ListView(
               children: [
+                SizedBox(height: 30),
                 Column(
                   children: [
                     Text("MASUK", style: kSubTitleStyle),
@@ -177,17 +185,17 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Image.asset(
-                    'assets/images/logo/dishub.png',
-                    height: 40,
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.all(15),
+                //   decoration: BoxDecoration(
+                //     color: Colors.black,
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: Image.asset(
+                //     'assets/images/logo/dishub.png',
+                //     height: 40,
+                //   ),
+                // ),
               ],
             ),
           ),

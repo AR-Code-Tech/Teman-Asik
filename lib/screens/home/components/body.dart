@@ -85,10 +85,20 @@ class _HomeBodyState extends State<HomeBody> {
             Container(
               margin: EdgeInsets.only(top: 15),
               child: Column(
-                children: [Text("LOGO APPS", style: kTitleStyle)],
+                children: [
+                  // Container(
+                  //   padding: EdgeInsets.all(10),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.blue,
+                  //     // borderRadius: BorderRadius.circular(100),
+                  //   ),
+                  //   child: Image.asset('assets/images/logo/app.png', height: 102),
+                  // )
+                ],
               ),
             ),
             Column(children: [
+              SizedBox(height: 15),
               Text("Anda adalah...", style: kSubTitleStyle),
               SizedBox(height: 30),
               CardSelection(
