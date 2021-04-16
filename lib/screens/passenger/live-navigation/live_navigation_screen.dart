@@ -71,17 +71,6 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   }
 
   void updateDriverMarker() {
-    // for(Marker marker in _markers) {
-    //   if (marker.markerId.value.toString().toLowerCase().contains('driver-')) {
-    //     setState(() {
-    //       _markers.removeWhere((Marker e) => e.markerId.value == marker.markerId.value);
-    //     });
-    //   }
-    // }
-    // 
-    // old = 2
-    // new = 1
-    // 
     try {
       List<Driver> tmpDriver = [];
       for(Driver driver in Drivers.data) {

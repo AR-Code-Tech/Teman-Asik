@@ -143,7 +143,6 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
         .then((GEO.Position position) {
       setState(() => myPos = LatLng(position.latitude, position.longitude));
       onLocationChange(position.latitude, position.longitude);
-      print(myPos);
     });
   }
 
@@ -154,6 +153,7 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
     // location
     await _locatePosition();
     _location = new Location();
+    await _location.serviceEnabled();
     _location.onLocationChanged().listen((LocationData locationdata) async {
       setState(() => myPos = LatLng(locationdata.latitude, locationdata.longitude));
       onLocationChange(locationdata.latitude, locationdata.longitude);
@@ -163,6 +163,7 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
   Future<void> onLocationChange(double latitude, double longitude) async {
     Object data = { 'latitude': latitude, 'longitude': longitude };
     socket.emit('driver:update', data);
+    print(data);
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teman_asik/screens/dev.dart';
 
 class HomeBody extends StatefulWidget {
   @override
@@ -119,13 +120,20 @@ class _HomeBodyState extends State<HomeBody> {
                 },
               ),
             ]),
-            Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(100),
+            GestureDetector(
+              onDoubleTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => DevScreen()
+                ));
+              },
+              child: Container(
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Image.asset('assets/images/logo/dishub.png', height: 42),
               ),
-              child: Image.asset('assets/images/logo/dishub.png', height: 42),
             )
           ],
         ),
