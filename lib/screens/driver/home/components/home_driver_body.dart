@@ -151,9 +151,9 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
     await initSocket();
 
     // location
-    await _locatePosition();
     _location = new Location();
     await _location.serviceEnabled();
+    await _locatePosition();
     _location.onLocationChanged().listen((LocationData locationdata) async {
       setState(() => myPos = LatLng(locationdata.latitude, locationdata.longitude));
       onLocationChange(locationdata.latitude, locationdata.longitude);
