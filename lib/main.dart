@@ -8,6 +8,7 @@ void main(List<String> args) {
 }
 
 class MyApp extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     return GlobalLoaderOverlay(

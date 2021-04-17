@@ -89,7 +89,7 @@ class _BusListBodyState extends State<BusListBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Daftar Angkotan', style: kTitleStyle, textAlign: TextAlign.left),
+              Text('Daftar Angkot', style: kTitleStyle, textAlign: TextAlign.left),
               SizedBox(height: 20,),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

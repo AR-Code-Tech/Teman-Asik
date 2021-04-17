@@ -33,7 +33,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final itemBackgroundColor = Colors.grey[200];
     setState(() {
       this.context = context;
     });
@@ -56,22 +55,22 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.directions_bus),
               label: 'Home',
-              backgroundColor: itemBackgroundColor,
+              backgroundColor: Color(0xff0C6DC6),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.alt_route),
-              label: 'Pilih Rute',
-              backgroundColor: itemBackgroundColor,
+              label: 'Cari Tujuan',
+              backgroundColor: Color(0xff0C6DC6),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.map),
               label: 'Halte',
-              backgroundColor: itemBackgroundColor,
+              backgroundColor: Color(0xff0C6DC6),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.question_answer),
               label: 'Faq',
-              backgroundColor: itemBackgroundColor,
+              backgroundColor: Color(0xff0C6DC6),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.close),
@@ -80,10 +79,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: kPrimaryColor,
-          unselectedItemColor: Colors.grey[400],
-          showUnselectedLabels: false,
-          showSelectedLabels: false,
+          selectedItemColor: Color(0xffEAEE16),
+          unselectedItemColor: Colors.white,
+          showUnselectedLabels: true,
+          showSelectedLabels: true,
           onTap: _onItemTapped,
         ),
       ),
