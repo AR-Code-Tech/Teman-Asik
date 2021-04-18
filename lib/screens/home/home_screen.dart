@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teman_asik/constans.dart';
 import 'components/body.dart';
 
 class HomeScreen extends StatefulWidget {

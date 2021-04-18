@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as GEO;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
 import 'package:teman_asik/screens/driver/home/profile/profile_driver.dart';
 import 'package:teman_asik/screens/driver/passengerMaps/passenger_maps_screen.dart';

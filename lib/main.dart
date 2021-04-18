@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-import 'package:teman_asik/screens/home/home_screen.dart';
-import 'constans.dart';
 import 'routes.dart';
 
 void main(List<String> args) {
@@ -13,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/splash',
       routes: routes,
     );
   }

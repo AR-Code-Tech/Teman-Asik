@@ -1,6 +1,7 @@
 import 'package:teman_asik/screens/driver/home/home_driver.dart';
 import 'package:teman_asik/screens/passenger/bus-route/bus_route_screen.dart';
 import 'package:teman_asik/screens/passenger/live-navigation/live_navigation_screen.dart';
+import 'package:teman_asik/screens/splash_screen.dart';
 
 import 'screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,5 +18,6 @@ final Map<String, Widget Function(BuildContext)> routes = {
   '/passenger/live-navigation': (ctx)  => LiveNavigationScreen(),
   '/driver/login': (ctx)  => LoginDriver(),
   '/driver/Home': (ctx)  => HomeDriverScreen(),
-  '/test': (ctx) => TestScreen()
+  '/test': (ctx) => TestScreen(),
+  '/splash': (ctx) => SplashScreen()
 };

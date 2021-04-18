@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:teman_asik/Api/auth_driver.dart';
 import 'package:teman_asik/constans.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 // import 'package:location/location.dart';
 import '../../home/components/home_driver_body.dart';
 
@@ -71,14 +70,14 @@ class _PassengerMapBodyState extends State<PassengerMapBody> {
     setState(() {
       _markers.clear();
     });
-    for(Driver driver in Drivers.data) {
+    // for(Driver driver in Drivers.data) {
       // setState(() {
       //   _markers.add(Marker(
       //     markerId: MarkerId('driver-${driver.userId}'),
       //     position: driver.position
       //   ));
       // });
-    }
+    // }
   }
   
   @override
