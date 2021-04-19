@@ -212,34 +212,36 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
       _finishNavigation();
     }
 
+    var pRuteLyn = Polyline(
+      polylineId: PolylineId('rute'),
+      visible: true,
+      points: List.from(car.routes),
+      color: Colors.blue,
+      width: 4
+    );
     if (navigationStep == 1) {
       Polyline p = await drawPolylineBeetween2Point(origin, car.closestPointFromOrigin, 'route-origin', TravelMode.walking);
       setState(() {
         navigationText = 'Silahkan menuju ke titik naik anda untuk menunggu angkutan.';
         _polylines.clear();
         _polylines.add(p);
+        _polylines.add(pRuteLyn);
       });
       _focusBound(origin, car.closestPointFromOrigin);
     } else if (navigationStep == 2) {
-      navigationText = 'Silahkan menunggu angkutan di area sekitar anda sekarang. Dan naiklah dan tunggu sampai anda dekat dengan titik turun.';
-      var p = Polyline(
-        polylineId: PolylineId('rute'),
-        visible: true,
-        points: List.from(car.routes),
-        color: Colors.blue,
-        width: 4
-      );
       setState(() {
+        navigationText = 'Silahkan menunggu angkutan di area sekitar anda sekarang. Dan naiklah dan tunggu sampai anda dekat dengan titik turun.';
         _polylines.clear();
-        _polylines.add(p);
+        _polylines.add(pRuteLyn);
       });
       _focusBound(car.closestPointFromOrigin, car.closestPointFromDestination);
     } else if (navigationStep == 3) {
-      navigationText = 'Silahkan turun di titik ini dan menuju ke lokasi tujuan anda.';
       Polyline p = await drawPolylineBeetween2Point(origin, destination, 'route-destination', TravelMode.walking);
       setState(() {
+        navigationText = 'Silahkan turun di titik ini dan menuju ke lokasi tujuan anda.';
         _polylines.clear();
         _polylines.add(p);
+        _polylines.add(pRuteLyn);
       });
       _focusBound(origin, destination);
     }
@@ -449,8 +451,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
                   target: origin,
                   zoom: 15
                 ),
-                zoomControlsEnabled: true,
-                compassEnabled: true,
+                zoomControlsEnabled: false,
                 zoomGesturesEnabled: true,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,

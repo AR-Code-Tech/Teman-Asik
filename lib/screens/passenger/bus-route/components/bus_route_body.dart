@@ -87,18 +87,18 @@ class CarItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(car.title, style: carTitleStlye),
-                      (bestWay) ? Column(
+                      Column(
                         children: [
                           SizedBox(height: 5),
                           Text(
-                            'Paling disarankan.',
+                            '4.7km - Rp 4000',
                             style: TextStyle(
-                              color: Colors.red[300],
+                              color: Colors.grey[800],
                               fontFamily: kFontFamily
                             ),
                           )
                         ],
-                      ) : Container()
+                      )
                     ],
                   ),
                 )
@@ -278,9 +278,9 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                   initialCameraPosition: CameraPosition(
                     target: LatLng(0, 0),
                   ),
-                  myLocationButtonEnabled: false,
+                  myLocationButtonEnabled: true,
                   myLocationEnabled: true,
-                  compassEnabled: true,
+                  zoomControlsEnabled: false,
                 ),
               ),
             ),
@@ -322,7 +322,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                             children: _busList.map((CarModel car) {
                               return CarItem(
                                 car: car,
-                                bestWay: (car.id == bestScoreTransportation),
+                                bestWay: false,
                                 onPress: () async {
                                   await Navigator.push(
                                     context,

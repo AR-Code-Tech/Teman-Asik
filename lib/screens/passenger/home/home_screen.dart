@@ -67,11 +67,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
               label: 'Halte',
               backgroundColor: Color(0xff0C6DC6),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.question_answer),
-              label: 'Faq',
-              backgroundColor: Color(0xff0C6DC6),
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.question_answer),
+            //   label: 'Faq',
+            //   backgroundColor: Color(0xff0C6DC6),
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.close),
               label: 'Exit',

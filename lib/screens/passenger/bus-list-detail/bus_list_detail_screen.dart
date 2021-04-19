@@ -190,6 +190,7 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                   initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 15),
                   myLocationEnabled: true,
                   myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
                 ),
               ),
             ),
@@ -234,6 +235,7 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   routeTitle,
@@ -246,10 +248,12 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                             ),
                             SizedBox(height: 20),
                             Text(
-                              routeDescription
+                              routeDescription, 
+                              textAlign: TextAlign.center,
                             ),
                             SizedBox(height: 20),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton.icon(
                                   onPressed: _locatePosition,
