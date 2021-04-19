@@ -13,6 +13,8 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math' show cos, sqrt, asin;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'dart:ui' as ui;
+
 
 
 class Driver {
@@ -52,11 +54,15 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   Timer timerUpdateDriverMarker;
   bool isFinished = false;
   List<Driver> oldDriver = [];
+  BitmapDescriptor markerUp;
+  BitmapDescriptor markerDown;
+  BitmapDescriptor markerDestination;
   
   @override
   void initState() {
     super.initState();
     Wakelock.enable();
+    setCustomMap();
     init();
   }
 
@@ -70,6 +76,12 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
     super.dispose();
   }
 
+
+  void setCustomMap() async{
+    markerUp = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/naik.png');
+    markerDown = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/turun.png');
+    markerDestination = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/tujuan.png');
+  }
   void updateDriverMarker() {
     try {
       List<Driver> tmpDriver = [];
@@ -306,7 +318,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
         Marker(
           markerId: MarkerId('destination'),
           position: destination,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          icon: markerDestination,
           infoWindow: InfoWindow(
             title: "Tujuan Kamu"
           ),
@@ -316,7 +328,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
         Marker(
           markerId: MarkerId('closestPointFromOrigin'),
           position: car.closestPointFromOrigin,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: markerUp,
           infoWindow: InfoWindow(
             title: "Titik Kamu Naik"
           ),
@@ -326,7 +338,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
         Marker(
           markerId: MarkerId('closestPointFromDestination'),
           position: car.closestPointFromDestination,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: markerDown,
           infoWindow: InfoWindow(
             title: "Titik Kamu Turun"
           ),
