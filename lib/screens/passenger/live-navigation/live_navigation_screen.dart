@@ -580,7 +580,9 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
           setState(() {
             car = CarModel(
               id: item['id'],
+              distance: item['distance'],
               title: item['name'],
+              cost: item['cost'],
               description: item['description'],
               icon: Icons.directions_bus,
               iconColor: Colors.red.withOpacity(0.3),

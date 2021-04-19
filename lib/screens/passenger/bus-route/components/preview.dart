@@ -1,6 +1,7 @@
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
@@ -39,13 +40,12 @@ class PreviewScreen extends StatefulWidget {
 
   @override
   _PreviewScreenState createState() => _PreviewScreenState(
-    this.origin,
-    this.destination,
-    this.closestPointFromOrigin,
-    this.closestPointFromDestination,
-    this.routes,
-    this.car
-  );
+      this.origin,
+      this.destination,
+      this.closestPointFromOrigin,
+      this.closestPointFromDestination,
+      this.routes,
+      this.car);
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
@@ -58,7 +58,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   LatLng closestPointFromOrigin;
   LatLng closestPointFromDestination;
   CarModel car;
-  
+
   _PreviewScreenState(
     this.origin,
     this.destination,
@@ -73,12 +73,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
     super.initState();
     setState(() {
       var p = Polyline(
-        polylineId: PolylineId('rute'),
-        visible: true,
-        points: List.from(routes),
-        color: Colors.blue,
-        width: 4
-      );
+          polylineId: PolylineId('rute'),
+          visible: true,
+          points: List.from(routes),
+          color: Colors.blue,
+          width: 4);
       _polylines.add(p);
 
       LatLng sourceLocation = closestPointFromOrigin;
@@ -91,7 +90,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
       }
     });
 
-
     _getLineOrigin();
     _getLineDestination();
   }
@@ -99,11 +97,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void _getLineDestination() async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      kGoogleApiKey,
-      PointLatLng(destination.latitude, destination.longitude),
-      PointLatLng(closestPointFromDestination.latitude, closestPointFromDestination.longitude),
-      travelMode: TravelMode.walking
-    );
+        kGoogleApiKey,
+        PointLatLng(destination.latitude, destination.longitude),
+        PointLatLng(closestPointFromDestination.latitude,
+            closestPointFromDestination.longitude),
+        travelMode: TravelMode.walking);
     List<LatLng> routeTravel = [];
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng pos) {
@@ -111,12 +109,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
       });
     }
     var p2 = Polyline(
-      polylineId: PolylineId('rute-destination'),
-      visible: true,
-      points: List.from(routeTravel),
-      color: Colors.orange,
-      width: 4
-    );
+        polylineId: PolylineId('rute-destination'),
+        visible: true,
+        points: List.from(routeTravel),
+        color: Colors.orange,
+        width: 4);
     setState(() {
       _polylines.add(p2);
     });
@@ -125,11 +122,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void _getLineOrigin() async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      kGoogleApiKey,
-      PointLatLng(origin.latitude, origin.longitude),
-      PointLatLng(closestPointFromOrigin.latitude, closestPointFromOrigin.longitude),
-      travelMode: TravelMode.walking
-    );
+        kGoogleApiKey,
+        PointLatLng(origin.latitude, origin.longitude),
+        PointLatLng(
+            closestPointFromOrigin.latitude, closestPointFromOrigin.longitude),
+        travelMode: TravelMode.walking);
     List<LatLng> routeTravel = [];
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng pos) {
@@ -137,12 +134,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
       });
     }
     var p2 = Polyline(
-      polylineId: PolylineId('rute-origin'),
-      visible: true,
-      points: List.from(routeTravel),
-      color: Colors.orange,
-      width: 4
-    );
+        polylineId: PolylineId('rute-origin'),
+        visible: true,
+        points: List.from(routeTravel),
+        color: Colors.orange,
+        width: 4);
     setState(() {
       _polylines.add(p2);
     });
@@ -151,37 +147,26 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _googleMapController = controller;
-      _markers.add(
-        Marker(
+      _markers.add(Marker(
           markerId: MarkerId('origin'),
           position: origin,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure)
-        )
-      );
-      _markers.add(
-        Marker(
-          markerId: MarkerId('destination'),
-          position: destination,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-          infoWindow: InfoWindow(
-            title: "Tujuan Kamu"
-          ),
-        )
-      );
-      _markers.add(
-        Marker(
-          markerId: MarkerId('closestPointFromDestination'),
-          position: closestPointFromDestination,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-          infoWindow: InfoWindow(
-            title: "Titik Kamu Turun"
-          ),
-        )
-      );
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueAzure)));
+      _markers.add(Marker(
+        markerId: MarkerId('destination'),
+        position: destination,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        infoWindow: InfoWindow(title: "Tujuan Kamu"),
+      ));
+      _markers.add(Marker(
+        markerId: MarkerId('closestPointFromDestination'),
+        position: closestPointFromDestination,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        infoWindow: InfoWindow(title: "Titik Kamu Turun"),
+      ));
     });
 
-
-    // 
+    //
     LatLng sourceLocation = origin;
     LatLng destLocation = destination;
     LatLng temp;
@@ -190,7 +175,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       sourceLocation = destLocation;
       destLocation = temp;
     }
-    LatLngBounds bound = LatLngBounds(southwest: sourceLocation, northeast: destLocation);
+    LatLngBounds bound =
+        LatLngBounds(southwest: sourceLocation, northeast: destLocation);
     CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
     controller.animateCamera(u2).then((void v) {
       check(u2, controller);
@@ -208,56 +194,78 @@ class _PreviewScreenState extends State<PreviewScreen> {
     }
   }
 
+  void _locatePosition() async {
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 17)));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: GoogleMap(
-                onMapCreated: _onMapCreated,
-                markers: _markers,
-                polylines: _polylines,
-                initialCameraPosition: CameraPosition(
-                  target: origin,
-                  zoom: 15
-                ),
-                zoomControlsEnabled: true,
-                compassEnabled: true,
-                zoomGesturesEnabled: true,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-              ),
+          child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: GoogleMap(
+              onMapCreated: _onMapCreated,
+              markers: _markers,
+              polylines: _polylines,
+              initialCameraPosition: CameraPosition(target: origin, zoom: 15),
+              zoomControlsEnabled: false,
+              compassEnabled: true,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
             ),
-            SafeArea(
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: kDefaultPadding,
-                    left: 0,
-                    child: RawMaterialButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      elevation: 5.0,
-                      fillColor: kBackgroundColor,
-                      child: Icon(
-                        Icons.chevron_left,
-                        size: 24.0,
-                        color: kDarkColor,
+          ),
+          SafeArea(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: kDefaultPadding,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      _locatePosition();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        "assets/icons/focus.png",
+                        height: 32,
+                        width: 32,
                       ),
-                      padding: EdgeInsets.all(5.0),
-                      shape: CircleBorder(),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Positioned(
+                  top: kDefaultPadding,
+                  left: 0,
+                  child: RawMaterialButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    elevation: 5.0,
+                    fillColor: kBackgroundColor,
+                    child: Icon(
+                      Icons.chevron_left,
+                      size: 24.0,
+                      color: kDarkColor,
+                    ),
+                    padding: EdgeInsets.all(5.0),
+                    shape: CircleBorder(),
+                  ),
+                ),
+              ],
             ),
-          ],
-        )
-      ),
+          ),
+        ],
+      )),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -277,10 +285,13 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 await prefs.setBool('navigation', true);
                 await prefs.setInt('navigation_step', 1);
                 await prefs.setInt('navigation_transportation', car.id);
-                await prefs.setDouble('navigation_destination_latitude', destination.latitude);
-                await prefs.setDouble('navigation_destination_longitude', destination.longitude);
+                await prefs.setDouble(
+                    'navigation_destination_latitude', destination.latitude);
+                await prefs.setDouble(
+                    'navigation_destination_longitude', destination.longitude);
                 Navigator.pop(context);
-                return Navigator.pushReplacementNamed(context, '/passenger/live-navigation');
+                return Navigator.pushReplacementNamed(
+                    context, '/passenger/live-navigation');
               }
             },
             label: Text('Mulai Navigasi'),
