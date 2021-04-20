@@ -64,11 +64,18 @@ class CarItem extends StatelessWidget {
         }
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 0),
+        margin: EdgeInsets.only(bottom: 8),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              offset: Offset(0.0, 1.0),
+              blurRadius: 5.0,
+            ),
+          ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
