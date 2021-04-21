@@ -254,9 +254,7 @@ class _BusListDetailScreenState extends State<BusListDetailScreen> {
                                     label: Text('Lihat Rute'),
                                     icon: Icon(Icons.alt_route),
                                     style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.green),
+                                      backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                                     ),
                                   ),
                                 ],

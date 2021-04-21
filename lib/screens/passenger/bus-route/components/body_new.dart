@@ -147,11 +147,12 @@ class _BusRouteBodyState extends State<BusRouteBody> {
   String placeNameText = '';
 
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     setState(() {
       _googleMapController = controller;
     });
-    _locatePosition();
+    await _locatePosition();
+    _setDestinationPos(myPos);
   }
 
   void _onMapCameraMove(CameraPosition cameraPosition) async {
@@ -191,7 +192,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
     await _getBusPrediction();
   }
   
-  void _locatePosition() async {
+  Future<void> _locatePosition() async {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) {
       setState(() {
@@ -297,13 +298,13 @@ class _BusRouteBodyState extends State<BusRouteBody> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             SizedBox(height: 10),
-            (!busPredictBoxShow) ? FloatingActionButton.extended(
-              heroTag: '1',
-              onPressed: _applyLocation,
-              label: Text('Pilih'),
-              icon: Icon(Icons.check),
-              backgroundColor: Colors.green,
-            ) : Container()
+            // (!busPredictBoxShow) ? FloatingActionButton.extended(
+            //   heroTag: '1',
+            //   onPressed: _applyLocation,
+            //   label: Text('Pilih'),
+            //   icon: Icon(Icons.check),
+            //   backgroundColor: Colors.green,
+            // ) : Container()
             // SizedBox(height: 10),
           ],
         ),
@@ -312,25 +313,59 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         child: Container(
           child: Stack(
             children: [
-              SizedBox(
-                height: (busPredictBoxShow) ? maxHeight * 0.60 : maxHeight,
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: GoogleMap(
-                        onMapCreated: _onMapCreated,
-                        onCameraMove: _onMapCameraMove,
-                        markers: _markers,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(0, 0),
+              Expanded(
+                child: Container(
+                  height: maxHeight * .5,
+                  color: Colors.black,
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        height: (busPredictBoxShow) ? maxHeight * 0.60 : maxHeight,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: GoogleMap(
+                                onMapCreated: _onMapCreated,
+                                onCameraMove: _onMapCameraMove,
+                                markers: _markers,
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(0, 0),
+                                ),
+                                myLocationEnabled: true,
+                                myLocationButtonEnabled: false,
+                                zoomControlsEnabled: false,
+                              ),
+                            ),
+                          ],
                         ),
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: false,
-                        zoomControlsEnabled: false,
                       ),
-                    ),
-                  ],
+                      (!busPredictBoxShow) ? Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          child: Icon(Icons.location_on, size: 50, color: Colors.redAccent),
+                          transform: Matrix4.translationValues(0, -20, 0)
+                        )
+                      ) : Container(),
+                      Positioned(
+                        bottom: kDefaultPadding,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            _locatePosition();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              "assets/icons/focus.png",
+                              height: 32,
+                              width: 32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               (busPredictBoxShow) ? SizedBox.expand(
@@ -401,43 +436,62 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                   },
                 ))
               : Container(),
-              (!busPredictBoxShow) ? Align(
-                alignment: Alignment.center,
-                child: Container(
-                  child: Icon(Icons.location_on, size: 50, color: Colors.redAccent),
-                  transform: Matrix4.translationValues(0, -20, 0)
-                )
-              ) : Container(),
-              (placeNameText != '') ? SizedBox(
-                height: maxHeight,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: kDefaultPadding,
-                      left: kDefaultPadding,
-                      child: SizedBox(
-                        width: maxWidth - (kDefaultPadding * 2),
-                        child: Container(
-                          padding: EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(7),
+              (!busPredictBoxShow) ? SizedBox.expand(
+                  child: DraggableScrollableSheet(
+                  initialChildSize: .4,
+                  minChildSize: .4,
+                  maxChildSize: .4,
+                  builder: (BuildContext c, s) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 25,
+                      ),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
                           ),
-                          child: Center(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 10.0,
+                            )
+                          ]),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 20),
+                          Text('Pilih Lokasi', style: TextStyle(fontFamily: kFontFamily, fontSize: 16, fontWeight: FontWeight.w600)),
+                          SizedBox(height: 10),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(.2),
+                              borderRadius: BorderRadius.circular(10)
+                            ),
                             child: Text(
-                              placeNameText,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: kLightColor,
+                              (placeNameText.length > 100) ? '${placeNameText.substring(0, 100)}...' : placeNameText
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _applyLocation,
+                              child: Text('Lanjut'),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    )
-                  ],
-                ),
-              ) : Container(),
+                    );
+                  },
+                ))
+              : Container(),
             ],
           ),
         ),
