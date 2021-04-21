@@ -145,6 +145,9 @@ class _BusRouteBodyState extends State<BusRouteBody> {
   bool busPredictBoxIsLoading = false;
   int bestScoreTransportation;
   String placeNameText = '';
+  bool isReady = false;
+  bool locationPermissionStatus = false;
+  Timer timerCheckPermission;
 
 
   void _onMapCreated(GoogleMapController controller) async {
@@ -152,11 +155,16 @@ class _BusRouteBodyState extends State<BusRouteBody> {
       _googleMapController = controller;
     });
     await _locatePosition();
-    _setDestinationPos(myPos);
+    Timer(Duration(seconds: 1), () {
+      setState(() {
+        isReady = true;
+      });
+      _setDestinationPos(myPos);
+    });
   }
 
   void _onMapCameraMove(CameraPosition cameraPosition) async {
-    await _setDestinationPos(cameraPosition.target);
+    if (isReady) await _setDestinationPos(cameraPosition.target);
   }
 
   Future<void> _setDestinationPos(LatLng coordinate) async {
@@ -166,11 +174,17 @@ class _BusRouteBodyState extends State<BusRouteBody> {
       destinationPos = coordinate;
       _markers.clear();
     });
+    var placemark = await Geocoder.google(kGoogleApiKey).findAddressesFromCoordinates(Coordinates(destinationPos.latitude, destinationPos.longitude));
+    setState(() {
+      placeNameText = placemark.first.addressLine;
+    });
+  }
+
+  void checkPermission() async {
     try {
-      var placemark = await Geocoder.google(kGoogleApiKey).findAddressesFromCoordinates(Coordinates(destinationPos.latitude, destinationPos.longitude));
-      setState(() {
-        placeNameText = placemark.first.addressLine;
-      });
+      bool geolocatorPermissionStatus  = await Geolocator.isLocationServiceEnabled();
+      setState(() => locationPermissionStatus = geolocatorPermissionStatus);
+      timerCheckPermission = Timer(Duration(milliseconds: 500), checkPermission);
     } catch (e) {
     }
   }
@@ -199,6 +213,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         LatLng pos = LatLng(position.latitude, position.longitude);
         _focusCameraMap(pos, 17);
         myPos = pos;
+        _setDestinationPos(myPos);
       });
     });
   }
@@ -268,12 +283,31 @@ class _BusRouteBodyState extends State<BusRouteBody> {
   @override
   void initState() {
     super.initState();
+    timerCheckPermission = Timer(Duration(milliseconds: 500), checkPermission);
+  }
+
+  @override
+  void dispose() {
+    timerCheckPermission.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height;
     final maxWidth = MediaQuery.of(context).size.width;
+    if (!locationPermissionStatus) {
+      return Scaffold(
+        body: Container(
+            color: kBackgroundColor,
+            child: Center(
+              child: Text(
+                'Tolong Aktifkan Layanan Lokasi...'
+              ),
+            ),
+          ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kBackgroundColor,
@@ -313,59 +347,57 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         child: Container(
           child: Stack(
             children: [
-              Expanded(
-                child: Container(
-                  height: maxHeight * .5,
-                  color: Colors.black,
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        height: (busPredictBoxShow) ? maxHeight * 0.60 : maxHeight,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: GoogleMap(
-                                onMapCreated: _onMapCreated,
-                                onCameraMove: _onMapCameraMove,
-                                markers: _markers,
-                                initialCameraPosition: CameraPosition(
-                                  target: LatLng(0, 0),
-                                ),
-                                myLocationEnabled: true,
-                                myLocationButtonEnabled: false,
-                                zoomControlsEnabled: false,
+              Container(
+                height: maxHeight * .5,
+                color: Colors.black,
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: (busPredictBoxShow) ? maxHeight * 0.60 : maxHeight,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: GoogleMap(
+                              onMapCreated: _onMapCreated,
+                              onCameraMove: _onMapCameraMove,
+                              markers: _markers,
+                              initialCameraPosition: CameraPosition(
+                                target: (myPos == null) ? LatLng(0, 0) : myPos,
                               ),
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: false,
+                              zoomControlsEnabled: false,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      (!busPredictBoxShow) ? Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          child: Icon(Icons.location_on, size: 50, color: Colors.redAccent),
-                          transform: Matrix4.translationValues(0, -20, 0)
-                        )
-                      ) : Container(),
-                      Positioned(
-                        bottom: kDefaultPadding,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            _locatePosition();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                              "assets/icons/focus.png",
-                              height: 32,
-                              width: 32,
-                            ),
+                    ),
+                    (!busPredictBoxShow) ? Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        child: Icon(Icons.location_on, size: 50, color: Colors.redAccent),
+                        transform: Matrix4.translationValues(0, -20, 0)
+                      )
+                    ) : Container(),
+                    Positioned(
+                      bottom: kDefaultPadding,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          _locatePosition();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            "assets/icons/focus.png",
+                            height: 32,
+                            width: 32,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               (busPredictBoxShow) ? SizedBox.expand(
@@ -471,7 +503,11 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                               borderRadius: BorderRadius.circular(10)
                             ),
                             child: Text(
-                              (placeNameText.length > 100) ? '${placeNameText.substring(0, 100)}...' : placeNameText
+                              // placeNameText,
+                              (placeNameText.length > 100) ? '${placeNameText.substring(0, 100)}...' : placeNameText,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
+                              maxLines: 3,
                             ),
                           ),
                           SizedBox(height: 10),
@@ -481,7 +517,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                               onPressed: _applyLocation,
                               child: Text('Lanjut'),
                               style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                                backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
                               ),
                             ),
                           ),

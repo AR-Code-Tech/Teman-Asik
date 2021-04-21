@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -59,6 +61,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
   LatLng closestPointFromOrigin;
   LatLng closestPointFromDestination;
   CarModel car;
+  BitmapDescriptor markerUp;
+  BitmapDescriptor markerDown;
+  BitmapDescriptor markerDestination;
 
   _PreviewScreenState(
     this.origin,
@@ -72,6 +77,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   @override
   void initState() {
     super.initState();
+    setCustomMap();
     setState(() {
       var p = Polyline(
           polylineId: PolylineId('rute'),
@@ -93,6 +99,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
     _getLineOrigin();
     _getLineDestination();
+  }
+
+  void setCustomMap() async{
+    markerUp = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/naik.png');
+    markerDown = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/turun.png');
+    markerDestination = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/tujuan.png');
   }
 
   void _getLineDestination() async {
@@ -149,38 +161,42 @@ class _PreviewScreenState extends State<PreviewScreen> {
     setState(() {
       _googleMapController = controller;
       _markers.add(Marker(
-          markerId: MarkerId('origin'),
-          position: origin,
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueAzure)));
-      _markers.add(Marker(
         markerId: MarkerId('destination'),
         position: destination,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        icon: markerDestination,
         infoWindow: InfoWindow(title: "Tujuan Kamu"),
       ));
       _markers.add(Marker(
         markerId: MarkerId('closestPointFromDestination'),
         position: closestPointFromDestination,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        icon: markerDown,
         infoWindow: InfoWindow(title: "Titik Kamu Turun"),
       ));
+      _markers.add(Marker(
+        markerId: MarkerId('closestPointFromOrigin'),
+        position: closestPointFromOrigin,
+        icon: markerUp,
+        infoWindow: InfoWindow(title: "Titik Kamu Naik"),
+      ));
     });
+    _focusBound();
+  }
 
-    //
-    LatLng sourceLocation = origin;
-    LatLng destLocation = destination;
-    LatLng temp;
-    if (sourceLocation.latitude > destLocation.latitude) {
-      temp = sourceLocation;
-      sourceLocation = destLocation;
-      destLocation = temp;
-    }
-    LatLngBounds bound =
-        LatLngBounds(southwest: sourceLocation, northeast: destLocation);
-    CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
-    controller.animateCamera(u2).then((void v) {
-      check(u2, controller);
+  void _focusBound() {
+    Timer(Duration(seconds: 1), () {
+      LatLng sourceLocation = origin;
+      LatLng destLocation = destination;
+      LatLng temp;
+      if (sourceLocation.latitude > destLocation.latitude) {
+        temp = sourceLocation;
+        sourceLocation = destLocation;
+        destLocation = temp;
+      }
+      LatLngBounds bound = LatLngBounds(southwest: sourceLocation, northeast: destLocation);
+      CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+      _googleMapController.animateCamera(u2).then((void v) {
+        check(u2, _googleMapController);
+      });
     });
   }
 
@@ -217,7 +233,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
               onMapCreated: _onMapCreated,
               markers: _markers,
               polylines: _polylines,
-              initialCameraPosition: CameraPosition(target: origin, zoom: 15),
+              initialCameraPosition: CameraPosition(target: (origin == null) ? LatLng(0, 0) : origin),
               zoomControlsEnabled: false,
               compassEnabled: true,
               myLocationEnabled: true,

@@ -284,6 +284,13 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
     return p2;
   }
 
+  void _focusCameraMap(LatLng position, double zoom) {
+    _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(position.latitude, position.longitude),
+            zoom: zoom)));
+  }
+
   void _focusBound(LatLng sourceLocation, LatLng destLocation) async {
     Timer(Duration(milliseconds: 600), () async {
       LatLng temp;
@@ -496,46 +503,59 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
                       ),
                     ),
                   ) : Container(),
-                  (navigationStep != 3) ? Positioned(
-                    bottom: kDefaultPadding /2,
+                  Positioned(
+                    bottom: (kDefaultPadding/2),
                     right: kDefaultPadding,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        )
-                      ),
-                      onPressed: () async {
-                        setState(() => navigationStep++);
-                        await onLocationChange();
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.chevron_right)
-                        ],
-                      ),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _focusCameraMap(origin, 17);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              "assets/icons/focus.png",
+                              height: 32,
+                              width: 32,
+                            ),
+                          ),
+                        ),
+                        (navigationStep != 3) ? ElevatedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              )
+                            ),
+                            onPressed: () async {
+                              setState(() => navigationStep++);
+                              await onLocationChange();
+                            },
+                            child: Row(
+                              children: [
+                                Icon(Icons.chevron_right)
+                              ],
+                            ),
+                        ) : Container(),
+                        (navigationStep == 3) ? ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.green),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              )
+                            ),
+                            onPressed: _finishNavigation,
+                            child: Row(
+                              children: [
+                                Icon(Icons.check),
+                                SizedBox(width: 8,),
+                                Text('Selesai')
+                              ],
+                            ),
+                        ) : Container(),
+                      ],
                     ),
-                  ) : Container(),
-                  (navigationStep == 3) ? Positioned(
-                    bottom: kDefaultPadding /2,
-                    right: kDefaultPadding,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.green),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        )
-                      ),
-                      onPressed: _finishNavigation,
-                      child: Row(
-                        children: [
-                          Icon(Icons.check),
-                          SizedBox(width: 8,),
-                          Text('Selesai')
-                        ],
-                      ),
-                    ),
-                  ) : Container(),
+                  ),
                 ],
               ),
             ),
