@@ -143,6 +143,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
     });
 
     // map
+    await _getBusPrediction();
     await _addPositionMarker();
     _focusBound(origin, destination);
 
@@ -311,40 +312,43 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   }
 
   Future<void> _addPositionMarker() async {
-    await _getBusPrediction();
-
-    setState(() {
-      _markers.add(
-        Marker(
-          markerId: MarkerId('destination'),
-          position: destination,
-          icon: markerDestination,
-          infoWindow: InfoWindow(
-            title: "Tujuan Kamu"
-          ),
-        )
-      );
-      _markers.add(
-        Marker(
-          markerId: MarkerId('closestPointFromOrigin'),
-          position: car.closestPointFromOrigin,
-          icon: markerUp,
-          infoWindow: InfoWindow(
-            title: "Titik Kamu Naik"
-          ),
-        )
-      );
-      _markers.add(
-        Marker(
-          markerId: MarkerId('closestPointFromDestination'),
-          position: car.closestPointFromDestination,
-          icon: markerDown,
-          infoWindow: InfoWindow(
-            title: "Titik Kamu Turun"
-          ),
-        )
-      );
-    });
+    try {
+      print(car);
+      setState(() {
+        _markers.add(
+          Marker(
+            markerId: MarkerId('destination'),
+            position: destination,
+            icon: markerDestination,
+            infoWindow: InfoWindow(
+              title: "Tujuan Kamu"
+            ),
+          )
+        );
+        _markers.add(
+          Marker(
+            markerId: MarkerId('closestPointFromOrigin'),
+            position: car.closestPointFromOrigin,
+            icon: markerUp,
+            infoWindow: InfoWindow(
+              title: "Titik Kamu Naik"
+            ),
+          )
+        );
+        _markers.add(
+          Marker(
+            markerId: MarkerId('closestPointFromDestination'),
+            position: car.closestPointFromDestination,
+            icon: markerDown,
+            infoWindow: InfoWindow(
+              title: "Titik Kamu Turun"
+            ),
+          )
+        );
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   void _exitNavigation() async {
@@ -592,9 +596,9 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
           setState(() {
             car = CarModel(
               id: item['id'],
-              distance: item['distance'],
               title: item['name'],
-              cost: item['cost'],
+              cost: double.parse(item['cost']),
+              distance: double.parse(item['distance']),
               description: item['description'],
               icon: Icons.directions_bus,
               iconColor: Colors.red.withOpacity(0.3),
@@ -605,7 +609,8 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
           });
           break;
         }
-      }        
+      }
+      print(car);
       
     } catch (e) {
       print(e);

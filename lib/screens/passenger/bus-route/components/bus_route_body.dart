@@ -14,7 +14,7 @@ import 'package:teman_asik/screens/passenger/bus-route/components/preview.dart';
 class CarModel {
   int id;
   double distance;
-  int cost;
+  double cost;
   String title;
   String description;
   Color iconColor;
@@ -97,7 +97,7 @@ class CarItem extends StatelessWidget {
                         children: [
                           SizedBox(height: 5),
                           Text(
-                            '${car.distance}km - Rp ${car.cost}',
+                            '${car.distance}km - Rp ${car.cost.toInt()}',
                             style: TextStyle(
                                 color: Colors.grey[800],
                                 fontFamily: kFontFamily),
@@ -429,9 +429,9 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         }
         cars.add(CarModel(
           id: item['id'],
-          distance: item['distance'],
           title: item['name'],
-          cost: item['cost'],
+          cost: double.parse(item['cost']),
+          distance: double.parse(item['distance']),
           description: item['description'],
           icon: Icons.directions_bus,
           iconColor: listColors[i % (listColors.length)].withOpacity(0.3),
@@ -443,6 +443,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
               item['closestPointFromDestination']['latitude'],
               item['closestPointFromDestination']['longitude']),
         ));
+        print(item['cost']);
         i++;
       }
 
