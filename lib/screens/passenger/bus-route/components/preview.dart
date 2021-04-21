@@ -5,7 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teman_asik/constans.dart';
-import 'bus_route_body.dart';
+// import 'bus_route_body.dart';
+import 'body_new.dart';
 
 class RouteModel {
   double lat;
