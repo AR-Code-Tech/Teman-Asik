@@ -68,7 +68,7 @@ class _LoginDriverBodyState extends State<LoginDriverBody> {
         await prefs.setString('auth_token', body['access_token']);
         Navigator.pushReplacementNamed(context, '/driver/Home');
       } else {
-        print(httpResult.statusCode);
+        return _showAlert('Server sedang sibuk. Coba lagi beberapa menit.');
       }
     } catch (e) {
       print(e);
