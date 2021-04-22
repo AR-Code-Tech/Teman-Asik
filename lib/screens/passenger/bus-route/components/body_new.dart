@@ -458,8 +458,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
                               blurRadius: 10.0,
                             )
                           ]),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: ListView(
                         children: [
                           SizedBox(height: 20),
                           Text('Pilih Lokasi', style: TextStyle(fontFamily: kFontFamily, fontSize: 16, fontWeight: FontWeight.w600)),
