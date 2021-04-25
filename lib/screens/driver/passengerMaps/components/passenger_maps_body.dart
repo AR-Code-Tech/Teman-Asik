@@ -33,7 +33,7 @@ class _PassengerMapBodyState extends State<PassengerMapBody> {
       _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(position.latitude, position.longitude),
-              zoom: 0)));
+              zoom: 17)));
     });
   }
 
@@ -94,6 +94,7 @@ class _PassengerMapBodyState extends State<PassengerMapBody> {
               zoom: 2,
             ),
             myLocationEnabled: true,
+            zoomControlsEnabled: false,
           ),
         ),
         SafeArea(

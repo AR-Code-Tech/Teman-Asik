@@ -145,6 +145,13 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
     });
   }
 
+  // void _focusCameraMap(LatLng position, double zoom) {
+  //   _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+  //       CameraPosition(
+  //           target: LatLng(position.latitude, position.longitude),
+  //           zoom: zoom)));
+  // }
+
   void init() async {
     // 
     await initSocket();
@@ -167,10 +174,10 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
 
   @override
   void dispose() {
+    super.dispose();
     socket.disconnect();
     socket.close();
     socket.dispose();
-    super.dispose();
   }
 
   @override
@@ -181,7 +188,7 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
 
   @override
   Widget build(BuildContext context) {
-    final itemBackgroundColor = Colors.grey[200];
+    final itemBackgroundColor = Color(0xff0C6DC6);
     setState(() {
       this.context = context;
     });
@@ -202,12 +209,12 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.badge),
-              label: 'Pilih Rute',
+              label: 'Akun',
               backgroundColor: itemBackgroundColor,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.live_help),
-              label: 'Halte',
+              label: 'Faq',
               backgroundColor: itemBackgroundColor,
             ),
             BottomNavigationBarItem(
@@ -217,10 +224,10 @@ class _HomeDriverBodyState extends State<HomeDriverBody> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: kPrimaryColor,
-          unselectedItemColor: Colors.grey[400],
-          showUnselectedLabels: false,
-          showSelectedLabels: false,
+          selectedItemColor: Color(0xffEAEE16),
+          unselectedItemColor: Colors.white,
+          showUnselectedLabels: true,
+          showSelectedLabels: true,
           onTap: _onItemTapped,
         ),
       ),

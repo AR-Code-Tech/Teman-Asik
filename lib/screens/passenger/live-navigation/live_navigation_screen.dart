@@ -86,6 +86,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
     try {
       List<Driver> tmpDriver = [];
       for(Driver driver in Drivers.data) {
+        if (driver.transportationId != car.id) continue;
         setState(() {
           for(Driver e in oldDriver) {
             try {
@@ -97,7 +98,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
           _markers.add(Marker(
             markerId: MarkerId('driver-${driver.userId}'),
             position: driver.position,
-            infoWindow: InfoWindow(title: 'Driver - ${driver.transportationId}'),
+            infoWindow: InfoWindow(title: '${car.title}'),
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
           ));
         });
