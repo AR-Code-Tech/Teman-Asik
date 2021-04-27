@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geo;
@@ -57,6 +56,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
   BitmapDescriptor markerUp;
   BitmapDescriptor markerDown;
   BitmapDescriptor markerDestination;
+  BitmapDescriptor markerDriver;
   
   @override
   void initState() {
@@ -81,6 +81,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
     markerUp = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/naik.png');
     markerDown = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/turun.png');
     markerDestination = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/tujuan.png');
+    markerDriver = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/icons/marker-car.png');
   }
   void updateDriverMarker() {
     try {
@@ -99,7 +100,8 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
             markerId: MarkerId('driver-${driver.userId}'),
             position: driver.position,
             infoWindow: InfoWindow(title: '${car.title}'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            icon: markerDriver,
+            // icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
           ));
         });
       }
