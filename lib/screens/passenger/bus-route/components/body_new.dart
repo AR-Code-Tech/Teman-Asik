@@ -168,16 +168,20 @@ class _BusRouteBodyState extends State<BusRouteBody> {
   }
 
   Future<void> _setDestinationPos(LatLng coordinate) async {
-    if (coordinate.latitude == 0 && coordinate.longitude == 0) return ;
-    setState(() {
-      busPredictBoxShow = false;
-      destinationPos = coordinate;
-      _markers.clear();
-    });
-    var placemark = await Geocoder.google(kGoogleApiKey).findAddressesFromCoordinates(Coordinates(destinationPos.latitude, destinationPos.longitude));
-    setState(() {
-      placeNameText = placemark.first.addressLine;
-    });
+    try {
+      if (coordinate.latitude == 0 && coordinate.longitude == 0) return ;
+      setState(() {
+        busPredictBoxShow = false;
+        destinationPos = coordinate;
+        _markers.clear();
+      });
+      var placemark = await Geocoder.google(kGoogleApiKey).findAddressesFromCoordinates(Coordinates(destinationPos.latitude, destinationPos.longitude));
+      setState(() {
+        placeNameText = placemark.first.addressLine;
+      });
+    } catch(e) {
+      print(e);
+    }
   }
 
   void checkPermission() async {
