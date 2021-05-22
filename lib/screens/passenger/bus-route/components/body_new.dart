@@ -567,22 +567,26 @@ class _BusRouteBodyState extends State<BusRouteBody> {
             routes.add(rute);
           } catch (e) {}
         }
-        cars.add(CarModel(
-          id: item['id'],
-          title: item['name'],
-          cost: double.parse(item['cost']),
-          distance: double.parse(item['distance']),
-          description: item['description'],
-          icon: Icons.directions_bus,
-          iconColor: listColors[i % (listColors.length)].withOpacity(0.3),
-          routes: routes,
-          closestPointFromOrigin: LatLng(
-              item['closestPointFromOrigin']['latitude'],
-              item['closestPointFromOrigin']['longitude']),
-          closestPointFromDestination: LatLng(
-              item['closestPointFromDestination']['latitude'],
-              item['closestPointFromDestination']['longitude']),
-        ));
+        try {
+          cars.add(CarModel(
+            id: item['id'],
+            title: item['name'],
+            cost: double.parse(item['cost'].toString()),
+            distance: double.parse(item['distance'].toString()),
+            description: item['description'],
+            icon: Icons.directions_bus,
+            iconColor: listColors[i % (listColors.length)].withOpacity(0.3),
+            routes: routes,
+            closestPointFromOrigin: LatLng(
+                item['closestPointFromOrigin']['latitude'],
+                item['closestPointFromOrigin']['longitude']),
+            closestPointFromDestination: LatLng(
+                item['closestPointFromDestination']['latitude'],
+                item['closestPointFromDestination']['longitude']),
+          ));
+        } catch (e) {
+          print(e);
+        }
         print(item['cost']);
         i++;
       }

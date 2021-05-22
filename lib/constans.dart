@@ -19,8 +19,8 @@ import 'package:flutter/material.dart';
 const String kAppTitle = "Teman Asik";
 // const String apiUrl = "http://192.168.1.7:7777/api";
 // const String socketUrl = "http://192.168.1.7:3000";
-const String apiUrl = "http://180.250.159.51:7777/api";
-const String socketUrl = "http://180.250.159.51:3000";
+const String apiUrl = "http://188.166.222.247/api";
+const String socketUrl = "http://188.166.222.247:3000";
 const String kGoogleApiKey = "AIzaSyBgYhr2631DBFlrZLUiQ9ABLo-L4ImB7Rg";
 // const String kGoogleApiKey = "AIzaSyAVWlVZr4QEOUmwOmVSSGUIJR3gHjwg0Zs";
 
