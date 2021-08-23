@@ -118,7 +118,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
           }
         });
       }
-      print('Tmp : ${tmpDriver.length}  Olddriver : ${oldDriver.length}  Drivers : ${Drivers.data.length}');
+      // print('Tmp : ${tmpDriver.length}  Olddriver : ${oldDriver.length}  Drivers : ${Drivers.data.length}');
     } catch (e) {
     }
   }
@@ -171,7 +171,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
       socket.emit('imapassenger', info);
     });
     socket.on('drivers', (data) {
-      print(data);
+      // print(data);
       Drivers.data.clear();
       for(var item in data) {
         try {
@@ -323,7 +323,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
 
   Future<void> _addPositionMarker() async {
     try {
-      print(car);
+      // print(car);
       setState(() {
         _markers.add(
           Marker(
@@ -620,8 +620,8 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
             car = CarModel(
               id: item['id'],
               title: item['name'],
-              cost: double.parse(item['cost']),
-              distance: double.parse(item['distance']),
+              cost: double.parse('${item['cost']}'),
+              distance: double.parse('${item['distance']}'),
               description: item['description'],
               icon: Icons.directions_bus,
               iconColor: Colors.red.withOpacity(0.3),
@@ -633,7 +633,7 @@ class _LiveNavigationScreenState extends State<LiveNavigationScreen> {
           break;
         }
       }
-      print(car);
+      // print(car);
       
     } catch (e) {
       print(e);

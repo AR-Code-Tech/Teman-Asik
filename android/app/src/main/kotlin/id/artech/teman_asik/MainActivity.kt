@@ -1,4 +1,4 @@
-package com.oesmanalie.it.angkot
+package id.artech.teman_asik
 
 import io.flutter.embedding.android.FlutterActivity
 

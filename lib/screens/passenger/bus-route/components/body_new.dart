@@ -176,6 +176,7 @@ class _BusRouteBodyState extends State<BusRouteBody> {
         _markers.clear();
       });
       var placemark = await Geocoder.google(kGoogleApiKey).findAddressesFromCoordinates(Coordinates(destinationPos.latitude, destinationPos.longitude));
+      print(placemark.length);
       setState(() {
         placeNameText = placemark.first.addressLine;
       });
